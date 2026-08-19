@@ -80,6 +80,72 @@
     {% endif %}
 </div>
 
+<!-- PAY OUTSTANDING CARD (STATEMENT QR & UPI PAYMENT APP) -->
+{% if udhaar.remaining_amount > 0 %}
+<div class="card card-custom p-4 mb-4 border-2 border-primary shadow-sm text-center">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 border-bottom pb-2">
+        <span class="badge bg-danger-subtle text-danger fw-bold fs-7 px-3 py-1 rounded-pill">
+            <i class="bi bi-clock-history me-1"></i> PAY OUTSTANDING
+        </span>
+        <a href="{% url 'customers:public_detail' udhaar.customer.pk %}" target="_blank" class="btn btn-outline-primary btn-sm fw-semibold">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Open Customer Statement Link
+        </a>
+    </div>
+
+    <h2 class="fw-extrabold text-dark display-6 mb-1">{{ udhaar.remaining_amount|inr }}</h2>
+    <div class="text-muted fs-7 mb-4">
+        UPI ID: <strong class="text-dark font-monospace bg-light px-2 py-1 rounded border">{{ business_settings.upi_id|default:"shopname@upi" }}</strong>
+    </div>
+
+    <!-- DUAL QR CODE OPTIONS SECTION -->
+    <div class="row g-4 align-items-stretch justify-content-center">
+        <!-- 1. CUSTOMER STATEMENT QR CODE (SCANS TO OPEN UDHAAR STATEMENT ONLINE) -->
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary fw-bold fs-8 mb-2"><i class="bi bi-phone me-1"></i> ONLINE STATEMENT QR</span>
+                    <div class="fw-bold text-dark fs-7 mb-1">Scan for Customer Udhaar Statement</div>
+                    <div class="text-muted fs-8 mb-2">Opens online statement with product breakdown, UPI & Pay button</div>
+                </div>
+                <div class="my-2">
+                    <div class="p-2 bg-white rounded-3 shadow-sm border d-inline-block">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ statement_url|urlencode }}" 
+                             alt="Customer Udhaar Statement QR Code" 
+                             class="img-fluid rounded-2"
+                             style="width: 170px; height: 170px;" />
+                    </div>
+                </div>
+                <div class="fs-8 text-secondary mt-1">
+                    <i class="bi bi-camera me-1"></i> Scan with any Phone Camera / Lens
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. DIRECT UPI PAYMENT QR CODE (SCANS IN UPI APP TO PAY DIRECTLY) -->
+        <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border text-center h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="badge bg-success-subtle text-success fw-bold fs-8 mb-2"><i class="bi bi-qr-code-scan me-1"></i> DIRECT UPI QR</span>
+                    <div class="fw-bold text-dark fs-7 mb-1">Scan using any UPI App</div>
+                    <div class="text-muted fs-8 mb-2">Directly opens payment screen in GPay, PhonePe, Paytm</div>
+                </div>
+                <div class="my-2">
+                    <div class="p-2 bg-white rounded-3 shadow-sm border d-inline-block">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi%3A%2F%2Fpay%3Fpa%3D{{ business_settings.upi_id|default:'shopname@upi'|urlencode }}%26pn%3D{{ current_business.name|urlencode }}%26am%3D{{ udhaar.remaining_amount|stringformat:'.2f' }}%26cu%3DINR%26tn%3DUdhaar%2520Payment" 
+                             alt="Direct UPI Payment QR Code" 
+                             class="img-fluid rounded-2"
+                             style="width: 170px; height: 170px;" />
+                    </div>
+                </div>
+                <div class="fs-8 text-secondary mt-1">
+                    Scan with GPay / PhonePe / Paytm • Exact: <strong>{{ udhaar.remaining_amount|inr }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Payments History for this Udhaar -->
 <div class="card card-custom">
     <div class="card-header bg-light">

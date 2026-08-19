@@ -114,7 +114,10 @@ class UdhaarDetailView(TenantRequiredMixin, DetailView):
         context['payment_form'] = PartialPaymentForm(initial={'amount': u.remaining_amount})
         context['due_date_form'] = ChangeDueDateForm(initial={'new_due_date': u.due_date})
         context['promise_form'] = PromiseForm(initial={'promised_date': u.promised_date, 'promised_amount': u.promised_amount or u.remaining_amount})
+        from django.urls import reverse
         context['payments'] = Payment.objects.filter(udhaar=u).order_by('-created_at')
+        context['business_settings'] = BusinessSettings.objects.filter(business=self.request.business).first()
+        context['statement_url'] = self.request.build_absolute_uri(reverse('customers:public_detail', kwargs={'pk': u.customer.pk}))
         return context
 
 class RecordPartialPaymentView(TenantRequiredMixin, View):

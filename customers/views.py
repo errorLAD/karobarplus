@@ -112,6 +112,10 @@ class CustomerDetailView(TenantRequiredMixin, DetailView):
 
         # WhatsApp Messages
         from whatsapp.models import WhatsAppMessage, WhatsAppConversation
+        from settings_app.models import BusinessSettings
+        from django.urls import reverse
+        context['business_settings'] = BusinessSettings.objects.filter(business=self.request.business).first()
+        context['statement_url'] = self.request.build_absolute_uri(reverse('customers:public_detail', kwargs={'pk': customer.pk}))
         conv = WhatsAppConversation.objects.filter(business=self.request.business, customer=customer).first()
         messages_qs = conv.messages.all().order_by('-timestamp')[:20] if conv else []
         context['whatsapp_messages'] = messages_qs
@@ -160,3 +164,23 @@ class CustomerDetailView(TenantRequiredMixin, DetailView):
         context['timeline'] = timeline_items[:30]
 
         return context
+
+class CustomerPublicDetailView(DetailView):
+    model = Customer
+    template_name = 'customers/customer_public_detail.html'
+    context_object_name = 'customer'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        customer = self.object
+        context['business'] = customer.business
+        context['sales'] = customer.sales.all().order_by('-sale_date')
+        context['payments'] = customer.payments.all().order_by('-created_at')
+        context['udhaars'] = customer.udhaars.all().order_by('-created_at')
+
+        from settings_app.models import BusinessSettings
+        from django.urls import reverse
+        context['business_settings'] = BusinessSettings.objects.filter(business=customer.business).first()
+        context['statement_url'] = self.request.build_absolute_uri(reverse('customers:public_detail', kwargs={'pk': customer.pk}))
+        return context
+
