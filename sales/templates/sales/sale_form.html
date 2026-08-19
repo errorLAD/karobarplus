@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}Record New Sale | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-lg-10">
+        <div class="card card-custom p-4 shadow-sm border-0">
+            <div class="d-flex align-items-center justify-content-between mb-4 pb-3 border-bottom">
+                <div>
+                    <h4 class="fw-bold text-dark mb-1"><i class="bi bi-cart-plus me-2 text-primary"></i> Create Sale Invoice</h4>
+                    <p class="text-muted mb-0 fs-7">Select items, scan barcodes, or record payment and credit limits.</p>
+                </div>
+                <a href="{% url 'sales:list' %}" class="btn btn-sm btn-outline-secondary">Cancel</a>
+            </div>
+
+            <!-- Soft Block Credit Limit Warning Banner -->
+            {% if overlimit_warning %}
+            <div class="alert alert-warning border-warning shadow-sm rounded-3 mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 text-warning"></i>
+                    <strong class="fs-6">CREDIT LIMIT EXCEEDED WARNING</strong>
+                </div>
+                <p class="mb-2 fs-7 text-dark">
+                    This transaction will increase the customer's outstanding balance to 
+                    <strong class="text-danger">₹{{ projected_outstanding|floatformat:2 }}</strong>, which exceeds their credit limit of 
+                    <strong class="text-dark">₹{{ customer_credit_limit|floatformat:2 }}</strong>.
+                </p>
+                <div class="form-check bg-white p-2.5 rounded-2 border border-warning">
+                    <input type="checkbox" name="confirm_credit_overlimit" value="yes" id="confirmCreditCheckbox" class="form-check-input" form="saleForm" required>
+                    <label class="form-check-label fw-bold text-dark fs-7" for="confirmCreditCheckbox">
+                        I acknowledge the credit limit warning and want to proceed with this sale anyway.
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="post" id="saleForm">
+                {% csrf_token %}
+
+                <!-- Customer Selection & Barcode Launcher -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label fw-semibold fs-7">Select Customer *</label>
+                        {{ form.customer }}
+                        {% if form.customer.errors %}<div class="text-danger fs-8 mt-1">{{ form.customer.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end gap-2">
+                        <a href="{% url 'customers:create' %}" class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="bi bi-person-plus me-1"></i> Add Customer
+                        </a>
+                        <button type="button" class="btn btn-outline-success btn-sm" id="openScannerBtn" data-bs-toggle="modal" data-bs-target="#scannerModal">
+                            <i class="bi bi-qr-code-scan me-1"></i> Scan Barcode Camera
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Line Items Table -->
+                <div class="card border rounded-3 mb-4">
+                    <div class="card-header bg-light py-2.5 fw-semibold fs-7 d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-box-seam me-2"></i> Sale Items</span>
+                        <button type="button" class="btn btn-sm btn-primary-custom py-1 px-3 fs-7" id="addRowBtn">
+                            <i class="bi bi-plus-lg me-1"></i> Add Line Item
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0" id="itemsTable">
+                            <thead class="table-light fs-8 text-uppercase">
+                                <tr>
+                                    <th style="width: 45%;">Item / Product</th>
+                                    <th style="width: 15%;">Unit Price (₹)</th>
+                                    <th style="width: 15%;">Quantity</th>
+                                    <th style="width: 20%;">Subtotal (₹)</th>
+                                    <th style="width: 5%;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsTbody">
+                                <tr class="item-row">
+                                    <td>
+                                        <select name="product_id[]" class="form-select product-select fs-7" required>
+                                            <option value="">Select Item / Product...</option>
+                                            {% for prod in products %}
+                                            <option value="{{ prod.id }}" data-price="{{ prod.selling_price }}" data-stock="{{ prod.stock_quantity }}" data-barcode="{{ prod.barcode }}">
+                                                {{ prod.name }} (₹{{ prod.selling_price }} - Stock: {{ prod.stock_quantity }})
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="number" step="0.01" name="unit_price[]" class="form-control unit-price fs-7" placeholder="0.00" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" value="1" name="quantity[]" class="form-control quantity fs-7" required>
+                                    </td>
+                                    <td>
+                                        <input type="number" step="0.01" class="form-control subtotal fs-7 bg-light" readonly value="0.00">
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-row"><i class="bi bi-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payment & Udhaar Calculation Section -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold fs-7">Payment Method</label>
+                            {{ form.payment_method }}
+                        </div>
+                        <div class="mb-3" id="dueDateContainer" style="display: none;">
+                            <label class="form-label fw-semibold fs-7 text-danger">Udhaar Promise / Due Date *</label>
+                            {{ form.due_date }}
+                            <small class="text-muted fs-8 d-block mt-1">Automatic WhatsApp reminders will be scheduled for this date.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold fs-7">Notes</label>
+                            {{ form.notes }}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card bg-light p-3 border rounded-3">
+                            <div class="d-flex justify-content-between mb-2 fs-7">
+                                <span class="text-secondary">Subtotal Amount:</span>
+                                <span class="fw-bold" id="calculatedSubtotal">₹ 0.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 fs-7">
+                                <span class="text-secondary">Discount (₹):</span>
+                                <div style="width: 130px;">
+                                    {{ form.discount }}
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 fs-6 pt-2 border-top">
+                                <span class="fw-bold text-dark">Net Payable Total:</span>
+                                <div style="width: 140px;">
+                                    {{ form.total_amount }}
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3 fs-6">
+                                <span class="fw-semibold text-success">Amount Paid Now (₹):</span>
+                                <div style="width: 140px;">
+                                    {{ form.paid_amount }}
+                                </div>
+                            </div>
+
+                            <div class="p-2.5 rounded-3 bg-danger-subtle text-danger border border-danger-subtle d-flex justify-content-between align-items-center fw-bold fs-6" id="udhaarBanner">
+                                <span>Udhaar Balance Created:</span>
+                                <span id="calculatedUdhaar">₹ 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-custom flex-grow-1 py-2 fs-6">
+                        <i class="bi bi-check-circle me-2"></i> Finalize & Record Sale
+                    </button>
+                    <a href="{% url 'sales:list' %}" class="btn btn-light border py-2">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Barcode Camera Scanner -->
+<div class="modal fade" id="scannerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="bi bi-camera me-2 text-success"></i> Barcode / QR Code Scanner</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" id="stopScannerBtn"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="reader" style="width: 100%;"></div>
+                <div id="scanResult" class="mt-3 fw-bold text-primary fs-7">Point camera at item barcode...</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- HTML5 QR / Barcode Scanner CDN -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const tbody = document.getElementById("itemsTbody");
+    const addRowBtn = document.getElementById("addRowBtn");
+
+    const totalAmountInput = document.getElementById("id_total_amount");
+    const discountInput = document.getElementById("id_discount");
+    const paidAmountInput = document.getElementById("id_paid_amount");
+    const calculatedSubtotal = document.getElementById("calculatedSubtotal");
+    const calculatedUdhaar = document.getElementById("calculatedUdhaar");
+    const udhaarBanner = document.getElementById("udhaarBanner");
+    const dueDateContainer = document.getElementById("dueDateContainer");
+
+    function calculateTotals() {
+        let subtotalSum = 0;
+        document.querySelectorAll(".item-row").forEach(row => {
+            const qty = parseFloat(row.querySelector(".quantity").value) || 0;
+            const price = parseFloat(row.querySelector(".unit-price").value) || 0;
+            const rowSub = qty * price;
+            row.querySelector(".subtotal").value = rowSub.toFixed(2);
+            subtotalSum += rowSub;
+        });
+
+        calculatedSubtotal.textContent = `₹ ${subtotalSum.toFixed(2)}`;
+
+        const discount = parseFloat(discountInput.value) || 0;
+        const netTotal = Math.max(0, subtotalSum - discount);
+        totalAmountInput.value = netTotal.toFixed(2);
+
+        const paid = parseFloat(paidAmountInput.value) || 0;
+        const udhaar = Math.max(0, netTotal - paid);
+        calculatedUdhaar.textContent = `₹ ${udhaar.toFixed(2)}`;
+
+        if (udhaar > 0) {
+            udhaarBanner.style.display = "flex";
+            dueDateContainer.style.display = "block";
+        } else {
+            udhaarBanner.style.display = "flex";
+            dueDateContainer.style.display = "none";
+        }
+    }
+
+    function attachRowEvents(row) {
+        const prodSelect = row.querySelector(".product-select");
+        const priceInput = row.querySelector(".unit-price");
+        const qtyInput = row.querySelector(".quantity");
+        const removeBtn = row.querySelector(".remove-row");
+
+        prodSelect.addEventListener("change", function() {
+            const selectedOpt = prodSelect.options[prodSelect.selectedIndex];
+            const price = selectedOpt.getAttribute("data-price");
+            if (price) {
+                priceInput.value = price;
+                calculateTotals();
+            }
+        });
+
+        priceInput.addEventListener("input", calculateTotals);
+        qtyInput.addEventListener("input", calculateTotals);
+
+        removeBtn.addEventListener("click", function() {
+            if (document.querySelectorAll(".item-row").length > 1) {
+                row.remove();
+                calculateTotals();
+            }
+        });
+    }
+
+    document.querySelectorAll(".item-row").forEach(attachRowEvents);
+
+    addRowBtn.addEventListener("click", function() {
+        const firstRow = document.querySelector(".item-row");
+        const newRow = firstRow.cloneNode(true);
+        newRow.querySelector(".product-select").value = "";
+        newRow.querySelector(".unit-price").value = "";
+        newRow.querySelector(".quantity").value = "1";
+        newRow.querySelector(".subtotal").value = "0.00";
+        tbody.appendChild(newRow);
+        attachRowEvents(newRow);
+    });
+
+    discountInput.addEventListener("input", calculateTotals);
+    paidAmountInput.addEventListener("input", calculateTotals);
+    totalAmountInput.addEventListener("input", calculateTotals);
+
+    calculateTotals();
+
+    // Barcode Camera Scanner Initialization
+    let html5QrcodeScanner = null;
+
+    document.getElementById("openScannerBtn").addEventListener("click", function() {
+        if (!html5QrcodeScanner) {
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render((decodedText, decodedResult) => {
+                document.getElementById("scanResult").textContent = `Scanned Barcode: ${decodedText}`;
+                
+                // Match scanned barcode against product select options
+                let matched = false;
+                document.querySelectorAll(".product-select option").forEach(opt => {
+                    if (opt.getAttribute("data-barcode") === decodedText || opt.text.includes(decodedText)) {
+                        const targetRow = document.querySelector(".item-row:last-child");
+                        targetRow.querySelector(".product-select").value = opt.value;
+                        targetRow.querySelector(".unit-price").value = opt.getAttribute("data-price");
+                        calculateTotals();
+                        matched = true;
+                    }
+                });
+
+                if (!matched) {
+                    alert(`No product found in catalog matching barcode '${decodedText}'. Please select manually.`);
+                }
+
+                html5QrcodeScanner.clear();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('scannerModal'));
+                modal.hide();
+            });
+        }
+    });
+
+    document.getElementById("stopScannerBtn").addEventListener("click", function() {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear();
+            html5QrcodeScanner = null;
+        }
+    });
+});
+</script>
+{% endblock %}

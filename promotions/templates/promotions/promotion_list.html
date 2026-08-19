@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block title %}Promotions & Offers | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="udhaar">
+<style>
+/* ==========================================================================
+   Udhaar CRM — Design System (page-scoped)
+   Same token set as the Suppliers / Payable / Sales / Products pages. Once
+   promoted to a shared stylesheet in base.html, remove this duplicate block
+   and the `.udhaar` prefix requirement.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.udhaar {
+    --u-ink: #12172B;
+    --u-ink-soft: #4B5268;
+    --u-muted: #8A90A3;
+    --u-line: #E7E9F2;
+    --u-line-soft: #F0F1F7;
+    --u-surface: #FFFFFF;
+    --u-bg: #F6F7FB;
+
+    --u-primary: #1E2A4A;
+    --u-primary-hover: #16213D;
+    --u-primary-tint: #EDF0F7;
+
+    --u-gold: #B8863B;
+    --u-gold-tint: #FBF3E4;
+
+    --u-success: #158A4D;
+    --u-success-tint: #E9F7EF;
+    --u-warning: #B7690A;
+    --u-warning-tint: #FDF1E1;
+    --u-danger: #C0362C;
+    --u-danger-tint: #FBEBEA;
+    --u-info: #2E5AAC;
+    --u-info-tint: #EAF0FB;
+    --u-whatsapp: #1E9E5A;
+    --u-whatsapp-hover: #17824A;
+
+    --u-radius-sm: 8px;
+    --u-radius: 12px;
+    --u-radius-lg: 16px;
+    --u-shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.05);
+    --u-shadow: 0 4px 16px rgba(18, 23, 43, 0.06);
+    --u-shadow-lg: 0 12px 32px rgba(18, 23, 43, 0.10);
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--u-ink);
+    background: var(--u-bg);
+    padding: 4px 4px 32px;
+}
+
+.udhaar * { box-sizing: border-box; }
+
+.udhaar .u-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--u-gold);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.udhaar h3.u-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--u-ink);
+    margin: 0 0 4px;
+}
+
+.udhaar .u-subtitle {
+    color: var(--u-ink-soft);
+    font-size: 14px;
+    margin: 0;
+    max-width: 56ch;
+}
+
+/* ---- Buttons ---- */
+.udhaar .u-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.udhaar .u-btn:active { transform: translateY(1px); }
+
+.udhaar .u-btn-primary {
+    background: var(--u-primary);
+    color: #fff;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-btn-primary:hover { background: var(--u-primary-hover); color: #fff; }
+
+.udhaar .u-btn-secondary {
+    background: var(--u-surface);
+    color: var(--u-ink);
+    border-color: var(--u-line);
+}
+.udhaar .u-btn-secondary:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+
+.udhaar .u-btn-whatsapp {
+    background: var(--u-whatsapp);
+    color: #fff;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-btn-whatsapp:hover { background: var(--u-whatsapp-hover); color: #fff; }
+
+.udhaar .u-btn-sm { padding: 7px 12px; font-size: 12.5px; }
+
+.udhaar .u-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid var(--u-line);
+    background: var(--u-surface);
+    color: var(--u-ink-soft);
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.udhaar .u-icon-btn:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+.udhaar .u-icon-btn.danger:hover { border-color: var(--u-danger); color: var(--u-danger); background: var(--u-danger-tint); }
+
+/* ---- Search card ---- */
+.udhaar .u-search-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 14px 16px;
+    box-shadow: var(--u-shadow-sm);
+    margin-bottom: 24px;
+}
+.udhaar .u-search-input-wrap { position: relative; }
+.udhaar .u-search-input-wrap i {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--u-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+.udhaar .u-search-input {
+    width: 100%;
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 10px 14px 10px 36px;
+    font-size: 14px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.udhaar .u-search-input:focus {
+    outline: none;
+    border-color: var(--u-primary);
+    background: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+
+/* ---- Badges ---- */
+.udhaar .u-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+.udhaar .u-badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+.udhaar .u-badge--active { background: var(--u-success-tint); color: var(--u-success); }
+.udhaar .u-badge--draft { background: var(--u-warning-tint); color: var(--u-warning); }
+.udhaar .u-badge--ended { background: var(--u-line-soft); color: var(--u-muted); }
+
+/* ---- Promotion card grid ---- */
+.udhaar .u-promo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+@media (max-width: 991px) { .udhaar .u-promo-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 575px) { .udhaar .u-promo-grid { grid-template-columns: 1fr; } }
+
+.udhaar .u-promo-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    box-shadow: var(--u-shadow-sm);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+.udhaar .u-promo-card:hover {
+    box-shadow: var(--u-shadow-lg);
+    border-color: #D9DCE8;
+    transform: translateY(-2px);
+}
+
+.udhaar .u-promo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.udhaar .u-poster-count {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--u-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.udhaar .u-promo-name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 16.5px;
+    color: var(--u-ink);
+    margin: 0 0 3px;
+    line-height: 1.3;
+}
+.udhaar .u-promo-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--u-gold);
+    margin: 0 0 8px;
+}
+.udhaar .u-promo-message {
+    font-size: 13px;
+    color: var(--u-ink-soft);
+    line-height: 1.5;
+    margin: 0 0 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.udhaar .u-promo-dates {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--u-ink-soft);
+    background: var(--u-line-soft);
+    border-radius: var(--u-radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 14px;
+}
+
+.udhaar .u-promo-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--u-line-soft);
+}
+
+/* ---- Empty state ---- */
+.udhaar .u-empty {
+    text-align: center;
+    padding: 72px 24px;
+    grid-column: 1 / -1;
+}
+.udhaar .u-empty-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--u-primary-tint);
+    color: var(--u-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 18px;
+}
+.udhaar .u-empty h5 { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--u-ink); margin-bottom: 6px; }
+.udhaar .u-empty p { color: var(--u-muted); font-size: 13.5px; max-width: 36ch; margin: 0 auto 20px; }
+</style>
+
+<!-- Page header -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+    <div>
+        <span class="u-eyebrow">Marketing</span>
+        <h3 class="u-title"><i class="bi bi-megaphone-fill me-2"></i>Promotions & Offers</h3>
+        <p class="u-subtitle">Create promotional campaigns, upload poster images, and dispatch offers directly via WhatsApp.</p>
+    </div>
+    <a href="{% url 'promotions:create' %}" class="u-btn u-btn-primary">
+        <i class="bi bi-plus-circle"></i> Create Promotion
+    </a>
+</div>
+
+<!-- Search -->
+<div class="u-search-card">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-12 col-md-9">
+            <div class="u-search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ q }}" class="u-search-input" placeholder="Search promotions by name, offer title, or message...">
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <button type="submit" class="u-btn u-btn-primary w-100">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Promotions grid -->
+<div class="u-promo-grid">
+    {% for promo in promotions %}
+    <div class="u-promo-card">
+        <div>
+            <div class="u-promo-meta">
+                <span class="u-badge {% if promo.is_active %}u-badge--active{% elif promo.status == 'Draft' %}u-badge--draft{% else %}u-badge--ended{% endif %}">
+                    {{ promo.status }}
+                </span>
+                <span class="u-poster-count"><i class="bi bi-image"></i> {{ promo.images.count }}/2 Posters</span>
+            </div>
+
+            <h5 class="u-promo-name">{{ promo.name }}</h5>
+            <h6 class="u-promo-title">{{ promo.title }}</h6>
+            <p class="u-promo-message">{{ promo.message }}</p>
+
+            {% if promo.start_date or promo.end_date %}
+            <div class="u-promo-dates">
+                <i class="bi bi-calendar-event"></i>
+                {% if promo.start_date %}{{ promo.start_date|date:"d M" }}{% endif %}
+                {% if promo.end_date %} to {{ promo.end_date|date:"d M Y" }}{% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="u-promo-actions">
+            <a href="{% url 'promotions:send' promo.pk %}" class="u-btn u-btn-whatsapp u-btn-sm flex-fill">
+                <i class="bi bi-whatsapp"></i> Send via WhatsApp
+            </a>
+            <a href="{% url 'promotions:detail' promo.pk %}" class="u-icon-btn" title="View & Manage Posters">
+                <i class="bi bi-eye"></i>
+            </a>
+            <a href="{% url 'promotions:edit' promo.pk %}" class="u-icon-btn" title="Edit">
+                <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'promotions:delete' promo.pk %}" class="u-icon-btn danger" title="Delete">
+                <i class="bi bi-trash"></i>
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="u-empty">
+        <div class="u-empty-icon"><i class="bi bi-megaphone"></i></div>
+        <h5>No promotions created yet</h5>
+        <p>Build an offer, add a poster, and send it straight to your customers on WhatsApp.</p>
+        <a href="{% url 'promotions:create' %}" class="u-btn u-btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Your First Promotion
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+</div>
+{% endblock %}

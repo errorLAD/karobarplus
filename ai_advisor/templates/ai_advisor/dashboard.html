@@ -1,0 +1,628 @@
+{% extends "base.html" %}
+{% load indian_formatting %}
+
+{% block title %}AI Business Advisor | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="udhaar">
+<style>
+/* ==========================================================================
+   Udhaar CRM — Design System (page-scoped)
+   Same token set as the other CRM pages. Once promoted to a shared
+   stylesheet in base.html, remove this duplicate block and the `.udhaar`
+   prefix requirement.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.udhaar {
+    --u-ink: #12172B;
+    --u-ink-soft: #4B5268;
+    --u-muted: #8A90A3;
+    --u-line: #E7E9F2;
+    --u-line-soft: #F0F1F7;
+    --u-surface: #FFFFFF;
+    --u-bg: #F6F7FB;
+
+    --u-primary: #1E2A4A;
+    --u-primary-hover: #16213D;
+    --u-primary-tint: #EDF0F7;
+
+    --u-gold: #B8863B;
+    --u-gold-tint: #FBF3E4;
+
+    --u-success: #158A4D;
+    --u-success-tint: #E9F7EF;
+    --u-warning: #B7690A;
+    --u-warning-tint: #FDF1E1;
+    --u-danger: #C0362C;
+    --u-danger-tint: #FBEBEA;
+    --u-info: #2E5AAC;
+    --u-info-tint: #EAF0FB;
+    --u-whatsapp: #1E9E5A;
+    --u-whatsapp-hover: #17824A;
+
+    --u-radius-sm: 8px;
+    --u-radius: 12px;
+    --u-radius-lg: 16px;
+    --u-shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.05);
+    --u-shadow: 0 4px 16px rgba(18, 23, 43, 0.06);
+    --u-shadow-lg: 0 12px 32px rgba(18, 23, 43, 0.10);
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--u-ink);
+    background: var(--u-bg);
+    padding: 4px 4px 32px;
+}
+
+.udhaar * { box-sizing: border-box; }
+
+.udhaar .u-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--u-gold);
+    margin-bottom: 6px;
+    display: block;
+}
+.udhaar h3.u-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--u-ink);
+    margin: 0 0 4px;
+}
+.udhaar .u-subtitle {
+    color: var(--u-ink-soft);
+    font-size: 14px;
+    margin: 0;
+    max-width: 56ch;
+}
+.udhaar h5.u-card-title, .udhaar h6.u-card-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    color: var(--u-ink);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ---- Generic card ---- */
+.udhaar .u-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    box-shadow: var(--u-shadow-sm);
+    padding: 22px;
+    margin-bottom: 24px;
+}
+.udhaar .u-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--u-line-soft);
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.udhaar .u-card-link {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--u-primary);
+    text-decoration: none;
+}
+.udhaar .u-card-link:hover { text-decoration: underline; }
+
+/* ---- Buttons ---- */
+.udhaar .u-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.2;
+    cursor: pointer;
+}
+.udhaar .u-btn:active { transform: translateY(1px); }
+.udhaar .u-btn-primary { background: var(--u-primary); color: #fff; box-shadow: var(--u-shadow-sm); }
+.udhaar .u-btn-primary:hover { background: var(--u-primary-hover); color: #fff; }
+.udhaar .u-btn-secondary { background: var(--u-surface); color: var(--u-ink); border-color: var(--u-line); }
+.udhaar .u-btn-secondary:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+.udhaar .u-btn-whatsapp { background: var(--u-whatsapp); color: #fff; }
+.udhaar .u-btn-whatsapp:hover { background: var(--u-whatsapp-hover); color: #fff; }
+.udhaar .u-btn-sm { padding: 6px 12px; font-size: 12.5px; }
+
+/* Normalize any raw Bootstrap .btn-* variants that come from dynamic
+   context (e.g. {{ act.btn_class }}) into the same shape/weight/radius as
+   the rest of the system, while keeping their semantic color intact. */
+.udhaar .btn {
+    border-radius: var(--u-radius-sm) !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.15s ease;
+}
+.udhaar .btn-primary { background: var(--u-primary) !important; border-color: var(--u-primary) !important; }
+.udhaar .btn-primary:hover { background: var(--u-primary-hover) !important; border-color: var(--u-primary-hover) !important; }
+.udhaar .btn-outline-primary { color: var(--u-primary) !important; border-color: var(--u-line) !important; background: var(--u-surface) !important; }
+.udhaar .btn-outline-primary:hover { background: var(--u-primary-tint) !important; border-color: var(--u-primary) !important; }
+.udhaar .btn-success { background: var(--u-success) !important; border-color: var(--u-success) !important; }
+.udhaar .btn-outline-success { color: var(--u-success) !important; border-color: var(--u-line) !important; background: var(--u-surface) !important; }
+.udhaar .btn-danger { background: var(--u-danger) !important; border-color: var(--u-danger) !important; }
+.udhaar .btn-outline-danger { color: var(--u-danger) !important; border-color: var(--u-line) !important; background: var(--u-surface) !important; }
+.udhaar .btn-warning { background: var(--u-warning) !important; border-color: var(--u-warning) !important; color: #fff !important; }
+.udhaar .btn-outline-warning { color: var(--u-warning) !important; border-color: var(--u-line) !important; background: var(--u-surface) !important; }
+.udhaar .btn-secondary, .udhaar .btn-light { background: var(--u-surface) !important; border-color: var(--u-line) !important; color: var(--u-ink) !important; }
+.udhaar .btn-secondary:hover, .udhaar .btn-light:hover { background: var(--u-line-soft) !important; }
+
+/* Normalize dynamic border-*/bg-*/text-* utility classes to the token palette */
+.udhaar .border-success { border-color: var(--u-success) !important; }
+.udhaar .border-danger { border-color: var(--u-danger) !important; }
+.udhaar .border-warning { border-color: var(--u-warning) !important; }
+.udhaar .border-primary { border-color: var(--u-primary) !important; }
+.udhaar .bg-success { background-color: var(--u-success) !important; color: #fff !important; }
+.udhaar .bg-danger { background-color: var(--u-danger) !important; color: #fff !important; }
+.udhaar .bg-warning { background-color: var(--u-warning) !important; color: #fff !important; }
+.udhaar .bg-primary { background-color: var(--u-primary) !important; color: #fff !important; }
+.udhaar .bg-success-subtle { background-color: var(--u-success-tint) !important; }
+.udhaar .bg-danger-subtle { background-color: var(--u-danger-tint) !important; }
+.udhaar .bg-warning-subtle { background-color: var(--u-warning-tint) !important; }
+.udhaar .text-success { color: var(--u-success) !important; }
+.udhaar .text-danger { color: var(--u-danger) !important; }
+.udhaar .text-warning { color: var(--u-warning) !important; }
+.udhaar .text-primary { color: var(--u-primary) !important; }
+.udhaar .bg-gradient-light { background: linear-gradient(135deg, var(--u-surface), var(--u-line-soft)) !important; }
+
+/* ---- Badges / pills ---- */
+.udhaar .badge {
+    border-radius: 999px !important;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em;
+    padding: 5px 12px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.udhaar .u-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--u-line-soft);
+    color: var(--u-ink-soft);
+    border: 1px solid var(--u-line);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.udhaar .u-pill:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+
+.udhaar .u-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--u-danger-tint);
+    color: var(--u-danger);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* ---- Inputs ---- */
+.udhaar .u-select, .udhaar .u-input {
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 9px 14px;
+    font-size: 13.5px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.udhaar .u-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238A90A3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 30px;
+    font-weight: 600;
+    color: var(--u-primary);
+    border-color: var(--u-primary-tint);
+}
+.udhaar .u-input { width: 100%; }
+.udhaar .u-select:focus, .udhaar .u-input:focus {
+    outline: none; border-color: var(--u-primary); background: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+.udhaar .u-ask-row { display: flex; gap: 8px; }
+.udhaar .u-ask-row .u-input { flex: 1; }
+
+/* ---- Health banner ---- */
+.udhaar .u-health-banner {
+    border-left-width: 4px;
+    border-left-style: solid;
+    padding: 20px 22px;
+}
+.udhaar .u-health-meta {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+}
+.udhaar .u-health-summary { font-size: 15px; color: var(--u-ink); font-weight: 500; line-height: 1.55; margin: 0; }
+.udhaar .u-source-tag { font-size: 11.5px; color: var(--u-muted); display: inline-flex; align-items: center; gap: 4px; }
+
+/* ---- QA answer box ---- */
+.udhaar .u-qa-box {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--u-primary-tint);
+    border-radius: var(--u-radius);
+    border: 1px solid #DDE3F0;
+}
+.udhaar .u-qa-question { font-weight: 700; color: var(--u-primary); margin-bottom: 6px; font-size: 13.5px; }
+.udhaar .u-qa-answer { color: var(--u-ink-soft); font-size: 13.5px; white-space: pre-wrap; margin-bottom: 10px; }
+
+/* ---- Action cards ---- */
+.udhaar .u-action-card {
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius);
+    padding: 16px;
+    background: var(--u-surface);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.udhaar .u-action-card:hover { box-shadow: var(--u-shadow); transform: translateY(-2px); }
+.udhaar .u-action-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--u-muted);
+    background: var(--u-line-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+.udhaar .u-action-title { font-weight: 700; color: var(--u-ink); margin: 10px 0 4px; font-size: 14.5px; }
+.udhaar .u-action-detail { font-size: 12.5px; color: var(--u-ink-soft); margin-bottom: 14px; line-height: 1.5; }
+
+/* ---- Table (priority contacts) ---- */
+.udhaar .u-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.udhaar .u-table thead th {
+    text-align: left; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--u-muted); background: var(--u-line-soft); padding: 11px 14px; border-bottom: 1px solid var(--u-line); white-space: nowrap;
+}
+.udhaar .u-table tbody td { padding: 12px 14px; border-bottom: 1px solid var(--u-line-soft); vertical-align: middle; color: var(--u-ink-soft); }
+.udhaar .u-table tbody tr:last-child td { border-bottom: none; }
+.udhaar .u-table tbody tr:hover { background: var(--u-line-soft); }
+.udhaar .u-num-danger { font-family: 'IBM Plex Mono', monospace; font-weight: 700; color: var(--u-danger); }
+
+/* ---- Mini stat pills (udhaar recovery) ---- */
+.udhaar .u-mini-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+@media (max-width: 767px) { .udhaar .u-mini-stat-row { grid-template-columns: repeat(2, 1fr); } }
+.udhaar .u-mini-stat { background: var(--u-line-soft); border: 1px solid var(--u-line); border-radius: var(--u-radius); padding: 12px 14px; }
+.udhaar .u-mini-stat--danger { background: var(--u-danger-tint); border-color: transparent; }
+.udhaar .u-mini-stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--u-muted); display: block; margin-bottom: 5px; }
+.udhaar .u-mini-stat-value { font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 17px; color: var(--u-ink); }
+.udhaar .u-mini-stat--danger .u-mini-stat-value { color: var(--u-danger); }
+
+/* ---- Problem / anomaly cards ---- */
+.udhaar .u-problem-card {
+    border: 1px solid var(--u-line);
+    border-left-width: 4px;
+    border-radius: var(--u-radius);
+    padding: 16px;
+    background: var(--u-surface);
+    height: 100%;
+}
+.udhaar .u-problem-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.udhaar .u-problem-title { font-weight: 700; color: var(--u-ink); font-size: 14.5px; margin: 0; }
+.udhaar .u-problem-row { font-size: 13px; color: var(--u-ink-soft); margin-bottom: 8px; line-height: 1.5; }
+.udhaar .u-problem-row strong { color: var(--u-ink); font-weight: 600; }
+.udhaar .u-problem-action { padding: 10px 12px; background: var(--u-line-soft); border-radius: var(--u-radius-sm); font-size: 13px; color: var(--u-ink); font-weight: 500; }
+
+/* ---- Insight list rows ---- */
+.udhaar .u-insight-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--u-line-soft);
+}
+.udhaar .u-insight-row:last-child { border-bottom: none; }
+.udhaar .u-insight-name { font-weight: 700; color: var(--u-ink); font-size: 13.5px; display: block; }
+.udhaar .u-insight-sub { font-size: 11.5px; color: var(--u-muted); }
+.udhaar .u-insight-block .u-insight-row { display: block; }
+.udhaar .u-insight-block .u-insight-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+
+.udhaar .u-empty-mini { text-align: center; padding: 24px 12px; color: var(--u-muted); font-size: 13px; }
+</style>
+
+<!-- Page header -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+    <div>
+        <span class="u-eyebrow">AI Advisor</span>
+        <h3 class="u-title"><i class="bi bi-cpu-fill me-2"></i>AI Business Advisor</h3>
+        <p class="u-subtitle">Practical, data-driven insights and actionable recommendations generated strictly from your business CRM records.</p>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+        <form method="get" class="d-inline">
+            <select name="period" class="u-select" onchange="this.form.submit()">
+                <option value="7_days" {% if period == '7_days' %}selected{% endif %}>Last 7 Days</option>
+                <option value="30_days" {% if period == '30_days' %}selected{% endif %}>Last 30 Days</option>
+                <option value="90_days" {% if period == '90_days' %}selected{% endif %}>Last 90 Days</option>
+                <option value="this_month" {% if period == 'this_month' %}selected{% endif %}>This Month</option>
+                <option value="previous_month" {% if period == 'previous_month' %}selected{% endif %}>Previous Month</option>
+                <option value="this_year" {% if period == 'this_year' %}selected{% endif %}>This Year</option>
+            </select>
+        </form>
+
+        <a href="{% url 'settings_app:index' %}" class="u-btn u-btn-secondary">
+            <i class="bi bi-gear-fill"></i> Configure AI API
+        </a>
+
+        <form method="post" action="{% url 'ai_advisor:refresh' %}" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="period" value="{{ period }}">
+            <button type="submit" class="u-btn u-btn-primary">
+                <i class="bi bi-arrow-clockwise"></i> Refresh AI Analysis
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- 1. Business Health Banner -->
+<div class="u-card u-health-banner bg-gradient-light border-{{ health.status_color|default:'warning' }}">
+    <div class="u-health-meta">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge bg-{{ health.status_color|default:'warning' }}">
+                Business Health: {{ health.status|default:'Needs Attention' }}
+            </span>
+            <span class="text-muted" style="font-size: 12px;">Period: {{ insights.period_start }} to {{ insights.period_end }}</span>
+        </div>
+        <span class="u-source-tag"><i class="bi bi-shield-check text-success"></i> Computed from Database ORM</span>
+    </div>
+    <p class="u-health-summary">{{ health.summary }}</p>
+</div>
+
+<!-- Ask About My Business -->
+<div class="u-card">
+    <h5 class="u-card-title mb-2"><i class="bi bi-chat-left-text-fill text-primary"></i> Ask About My Business</h5>
+    <p class="u-subtitle mb-3">Ask any question to analyze your business's real database context in real time.</p>
+
+    <form method="post" action="{% url 'ai_advisor:ask' %}" class="mb-3">
+        {% csrf_token %}
+        <input type="hidden" name="period" value="{{ period }}">
+        <div class="u-ask-row">
+            <input type="text" name="question" id="askInput" class="u-input" placeholder="e.g. Why is my udhaar increasing? or What products should I restock?" required>
+            <button type="submit" class="u-btn u-btn-primary">
+                <i class="bi bi-search"></i> Ask AI
+            </button>
+        </div>
+    </form>
+
+    <div class="d-flex flex-wrap gap-2">
+        <span class="u-pill" onclick="setQuestion('Why is my udhaar increasing?')">💬 "Why is my udhaar increasing?"</span>
+        <span class="u-pill" onclick="setQuestion('Which customers should I contact today?')">💬 "Which customers should I contact today?"</span>
+        <span class="u-pill" onclick="setQuestion('What products are selling fastest?')">💬 "What products are selling fastest?"</span>
+        <span class="u-pill" onclick="setQuestion('What products should I restock?')">💬 "What products should I restock?"</span>
+    </div>
+
+    {% if qa_result %}
+    <div class="u-qa-box">
+        <div class="u-qa-question">Q: "{{ qa_result.question }}"</div>
+        <div class="u-qa-answer">{{ qa_result.answer }}</div>
+        {% if qa_result.link_url %}
+        <a href="{{ qa_result.link_url }}" class="u-btn u-btn-secondary u-btn-sm">{{ qa_result.link_text }} <i class="bi bi-arrow-right"></i></a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- 2. Top 5 Priority Actions -->
+<div class="u-card">
+    <div class="u-card-header">
+        <h5 class="u-card-title"><i class="bi bi-check2-square text-success"></i> What Should I Do Today? (Top 5 Priority Actions)</h5>
+        <span class="badge bg-success-subtle text-success" style="font-size: 11px;">AI Recommended</span>
+    </div>
+    <div class="row g-3">
+        {% for act in todays_actions %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="u-action-card">
+                <div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="u-action-num">Action #{{ forloop.counter }}</span>
+                        <i class="bi {{ act.icon }} text-primary fs-5"></i>
+                    </div>
+                    <h6 class="u-action-title">{{ act.title }}</h6>
+                    <p class="u-action-detail">{{ act.detail }}</p>
+                </div>
+                <a href="{{ act.link_url }}" class="btn {{ act.btn_class|default:'btn-primary' }} btn-sm w-100">
+                    {{ act.action_text }} <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 u-empty-mini">
+            <i class="bi bi-check-all text-success fs-1 d-block mb-1"></i>
+            No critical priority actions required today. Business operations are stable.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 3. Who Should I Contact Today -->
+<div class="u-card">
+    <div class="u-card-header">
+        <h5 class="u-card-title"><i class="bi bi-telephone-outbound-fill text-danger"></i> Who Should I Contact Today?</h5>
+        <a href="{% url 'customers:list' %}" class="u-card-link">View All Customers</a>
+    </div>
+    <div class="table-responsive">
+        <table class="u-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Customer Name</th>
+                    <th class="text-end">Outstanding</th>
+                    <th>Days Overdue</th>
+                    <th>Recommended Action</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in priority_contacts %}
+                <tr>
+                    <td><span class="u-rank">{{ forloop.counter }}</span></td>
+                    <td>
+                        <strong style="color: var(--u-ink); display: block;">{{ item.customer_name }}</strong>
+                        <small class="text-muted" style="font-size: 11.5px;">{{ item.customer_phone }}</small>
+                    </td>
+                    <td class="text-end"><span class="u-num-danger">₹{{ item.outstanding|floatformat:2 }}</span></td>
+                    <td style="font-weight: 600; color: var(--u-ink);">{{ item.days_overdue }} days</td>
+                    <td>{{ item.recommended_action }}</td>
+                    <td class="text-end">
+                        <div class="d-flex align-items-center justify-content-end gap-1">
+                            <a href="{% url 'customers:detail' item.customer_id %}" class="u-btn u-btn-secondary u-btn-sm">
+                                View Customer
+                            </a>
+                            <a href="{% url 'whatsapp:inbox' %}?customer_id={{ item.customer_id }}" class="u-btn u-btn-whatsapp u-btn-sm">
+                                <i class="bi bi-whatsapp"></i> Send Reminder
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="u-empty-mini">No overdue accounts requiring urgent follow-up today.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 4. Udhaar Recovery Analysis -->
+<div class="u-card">
+    <div class="u-card-header">
+        <h5 class="u-card-title"><i class="bi bi-journal-bookmark-fill text-warning"></i> Udhaar Recovery Analysis <span class="text-muted fw-normal" style="font-size: 12.5px;">("Why is my udhaar money not coming?")</span></h5>
+        <a href="{% url 'ai_advisor:problems' %}" class="u-card-link">Full Problems Report</a>
+    </div>
+
+    <div class="u-mini-stat-row">
+        <div class="u-mini-stat">
+            <span class="u-mini-stat-label">Total Outstanding</span>
+            <strong class="u-mini-stat-value">₹{{ udhaar.total_outstanding|default:0|floatformat:2 }}</strong>
+        </div>
+        <div class="u-mini-stat u-mini-stat--danger">
+            <span class="u-mini-stat-label">Total Overdue</span>
+            <strong class="u-mini-stat-value">₹{{ udhaar.total_overdue|default:0|floatformat:2 }}</strong>
+        </div>
+        <div class="u-mini-stat">
+            <span class="u-mini-stat-label">Due Today</span>
+            <strong class="u-mini-stat-value">{{ udhaar.due_today_cnt|default:0 }} acc. (₹{{ udhaar.due_today_amt|default:0|floatformat:2 }})</strong>
+        </div>
+        <div class="u-mini-stat">
+            <span class="u-mini-stat-label">Broken Promises</span>
+            <strong class="u-mini-stat-value">{{ udhaar.broken_promises_cnt|default:0 }}</strong>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        {% for prob in udhaar.problems %}
+        <div class="col-12 col-md-6">
+            <div class="u-problem-card" style="border-left-color: {% if prob.priority == 'High' %}var(--u-danger){% else %}var(--u-warning){% endif %};">
+                <div class="u-problem-head">
+                    <h6 class="u-problem-title">{{ prob.title }}</h6>
+                    <span class="badge bg-{% if prob.priority == 'High' %}danger{% else %}warning{% endif %}" style="font-size: 10.5px;">{{ prob.priority }} Priority</span>
+                </div>
+                <div class="u-problem-row"><strong>Problem:</strong> {{ prob.problem }}</div>
+                <div class="u-problem-row"><strong>Evidence:</strong> {{ prob.evidence }}</div>
+                <div class="u-problem-row"><strong>Possible Reason:</strong> {{ prob.reason }}</div>
+                <div class="u-problem-action"><strong>Recommended Action:</strong> {{ prob.action }}</div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 u-empty-mini">No major udhaar recovery anomalies detected.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 5. Sales, Inventory & Restocking Intelligence -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-4">
+        <div class="u-card h-100 mb-0">
+            <h6 class="u-card-title mb-3 pb-2" style="border-bottom: 1px solid var(--u-line-soft);"><i class="bi bi-graph-up-arrow text-success"></i> What is Selling Fast?</h6>
+            <div class="u-insight-block">
+                {% for f in fast_moving %}
+                <div class="u-insight-row">
+                    <div>
+                        <span class="u-insight-name">{{ f.product_name }}</span>
+                        <span class="u-insight-sub">Revenue: ₹{{ f.revenue|floatformat:2 }}</span>
+                    </div>
+                    <span class="badge bg-success-subtle text-success">{{ f.units_sold }} units</span>
+                </div>
+                {% empty %}
+                <div class="u-empty-mini">No sales recorded in period.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="u-card h-100 mb-0">
+            <h6 class="u-card-title mb-3 pb-2" style="border-bottom: 1px solid var(--u-line-soft);"><i class="bi bi-cart-plus-fill text-primary"></i> What Should I Buy? (Restock)</h6>
+            <div class="u-insight-block">
+                {% for r in restock %}
+                <div class="u-insight-row" style="display: block;">
+                    <div class="u-insight-top">
+                        <span class="u-insight-name">{{ r.product_name }}</span>
+                        <span class="badge bg-danger">Stock: {{ r.current_stock }}</span>
+                    </div>
+                    <span class="u-insight-sub">{{ r.recommendation }}</span>
+                </div>
+                {% empty %}
+                <div class="u-empty-mini">All products have sufficient stock above thresholds.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="u-card h-100 mb-0">
+            <h6 class="u-card-title mb-3 pb-2" style="border-bottom: 1px solid var(--u-line-soft);"><i class="bi bi-hourglass-bottom text-warning"></i> Slow-Moving Inventory</h6>
+            <div class="u-insight-block">
+                {% for s in slow_moving %}
+                <div class="u-insight-row" style="display: block;">
+                    <div class="u-insight-top">
+                        <span class="u-insight-name">{{ s.product_name }}</span>
+                        <span class="badge bg-warning" style="color: #fff;">{{ s.stock }} in stock</span>
+                    </div>
+                    <span class="u-insight-sub">Only {{ s.sold_in_period }} sold. {{ s.recommendation }}</span>
+                </div>
+                {% empty %}
+                <div class="u-empty-mini">No slow-moving inventory flags.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function setQuestion(q) {
+    document.getElementById('askInput').value = q;
+}
+</script>
+{% endblock %}

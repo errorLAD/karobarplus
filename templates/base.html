@@ -1,0 +1,779 @@
+```html
+{% load static %}
+{% load indian_formatting %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KarobarPlus | Smart Recovery & CRM{% endblock %}</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    <style>
+        :root {
+            --nav-bg: rgba(255, 255, 255, 0.88);
+            --nav-border: #E2E8F0;
+            --brand-primary: #4F46E5;
+            --brand-primary-hover: #4338CA;
+            --brand-primary-light: #EEF2FF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            --shadow-nav: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            --shadow-dropdown: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+        }
+
+        /* Modern Clean Light SaaS Top Navigation Header */
+        .top-header {
+            height: 72px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--nav-border);
+            padding: 0 1.75rem;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            box-shadow: var(--shadow-nav);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Action Icon Button */
+        .header-icon-btn {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #FFFFFF;
+            border: 1px solid var(--nav-border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+        }
+
+        .header-icon-btn:hover {
+            background-color: #F8FAFC;
+            color: var(--brand-primary);
+            border-color: #CBD5E1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+        }
+
+        .header-icon-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Business / Tenant Pill */
+        .tenant-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.4rem 0.9rem 0.4rem 0.5rem;
+            background-color: #FFFFFF;
+            border: 1px solid var(--nav-border);
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .tenant-pill:hover {
+            border-color: #CBD5E1;
+            background-color: #F8FAFC;
+        }
+
+        .tenant-icon-wrap {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+            color: var(--brand-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+
+        /* Live Status Pulse Dot */
+        .status-pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10B981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse-emerald 2s infinite;
+            display: inline-block;
+        }
+
+        @keyframes pulse-emerald {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Omnibox Global Search Bar */
+        .nav-search-bar {
+            position: relative;
+            width: 280px;
+            transition: all 0.25s ease;
+        }
+
+        @media (max-width: 992px) {
+            .nav-search-bar {
+                width: 180px;
+            }
+        }
+
+        .nav-search-bar input {
+            width: 100%;
+            height: 40px;
+            padding: 0.45rem 2.4rem 0.45rem 2.4rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background-color: #F8FAFC;
+            border: 1px solid var(--nav-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .nav-search-bar input::placeholder {
+            color: var(--text-subtle);
+            font-size: 0.825rem;
+        }
+
+        .nav-search-bar input:focus {
+            background-color: #FFFFFF;
+            border-color: #818CF8;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+        }
+
+        .nav-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .search-kbd {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #FFFFFF;
+            border: 1px solid var(--nav-border);
+            border-radius: 6px;
+            padding: 0.1rem 0.4rem;
+            color: var(--text-muted);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+            pointer-events: none;
+        }
+
+        /* Simulator SaaS Badge Button */
+        .btn-simulator {
+            background-color: #ECFDF5;
+            color: #047857;
+            border: 1px solid #A7F3D0;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            padding: 0.45rem 0.95rem;
+            border-radius: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            box-shadow: 0 1px 2px rgba(16, 185, 129, 0.05);
+        }
+
+        .btn-simulator:hover {
+            background-color: #10B981;
+            color: #FFFFFF;
+            border-color: #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Header Quick Action Button */
+        .btn-header-action {
+            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+            color: #FFFFFF;
+            border: none;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
+            text-decoration: none;
+        }
+
+        .btn-header-action:hover {
+            background: linear-gradient(135deg, #4338CA 0%, #4F46E5 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+            transform: translateY(-1px);
+        }
+
+        /* User Profile Pill */
+        .user-profile-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+            border-radius: 12px;
+            border: 1px solid var(--nav-border);
+            background: #FFFFFF;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+        }
+
+        .user-profile-pill:hover {
+            border-color: #CBD5E1;
+            background-color: #F8FAFC;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar-initial {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4F46E5 0%, #818CF8 100%);
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+        }
+
+        .avatar-status-badge {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 10px;
+            height: 10px;
+            background-color: #10B981;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+        }
+
+        /* Dropdown Styling */
+        .saas-dropdown-menu {
+            border: 1px solid var(--nav-border) !important;
+            box-shadow: var(--shadow-dropdown) !important;
+            animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================================
+           UDHAAR CRM — LIGHT SAAS SIDEBAR
+           ============================================================ */
+
+        #sidebar-wrapper {
+            background: #FFFFFF !important;
+            color: #475569 !important;
+            border-right: 1px solid #E2E8F0 !important;
+            box-shadow: 2px 0 12px rgba(15, 23, 42, 0.03) !important;
+        }
+
+        /* Brand area */
+        #sidebar-wrapper .sidebar-heading {
+            background: #FFFFFF !important;
+            color: #0F172A !important;
+            border-bottom: 1px solid #E2E8F0 !important;
+            padding: 24px 18px !important;
+        }
+
+        #sidebar-wrapper .brand-badge {
+            width: 48px !important;
+            height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%) !important;
+            color: #FFFFFF !important;
+            border-radius: 14px !important;
+            font-size: 22px !important;
+            font-weight: 800 !important;
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.20) !important;
+        }
+
+        #sidebar-wrapper .sidebar-heading .fw-bold {
+            color: #0F172A !important;
+            font-weight: 700 !important;
+        }
+
+        #sidebar-wrapper .sidebar-heading small {
+            color: #64748B !important;
+        }
+
+        /* Navigation */
+        #sidebar-wrapper .sidebar-nav {
+            background: #FFFFFF !important;
+            padding: 14px 0 !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            color: #64748B !important;
+            background: transparent !important;
+            border-radius: 11px !important;
+            margin: 3px 10px !important;
+            padding: 11px 14px !important;
+            font-size: 15.5px !important;
+            font-weight: 500 !important;
+            text-decoration: none !important;
+            transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link i {
+            width: 30px !important;
+            min-width: 30px !important;
+            margin-right: 8px !important;
+            color: #64748B !important;
+            font-size: 19px !important;
+            transition: color 0.18s ease !important;
+        }
+
+        /* Hover */
+        #sidebar-wrapper .sidebar-nav .nav-link:hover {
+            background: #F8FAFC !important;
+            color: #334155 !important;
+            transform: translateX(2px) !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link:hover i {
+            color: #4F46E5 !important;
+        }
+
+        /* Active item */
+        #sidebar-wrapper .sidebar-nav .nav-link.active {
+            background: #EEF2FF !important;
+            color: #4338CA !important;
+            font-weight: 600 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link.active i {
+            color: #4F46E5 !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link.active:hover {
+            background: #E0E7FF !important;
+            color: #3730A3 !important;
+            transform: none !important;
+        }
+
+        /* Admin/warning links */
+        #sidebar-wrapper .sidebar-nav .nav-link.text-warning {
+            color: #B45309 !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link.text-warning i {
+            color: #D97706 !important;
+        }
+
+        #sidebar-wrapper .sidebar-nav .nav-link.text-warning:hover {
+            background: #FFFBEB !important;
+            color: #92400E !important;
+        }
+
+        /* Footer */
+        #sidebar-wrapper > div:last-child {
+            background: #FFFFFF !important;
+            border-top: 1px solid #E2E8F0 !important;
+        }
+
+        /* New Sale button */
+        #sidebar-wrapper .btn-primary-custom {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%) !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            box-shadow: 0 5px 14px rgba(79, 70, 229, 0.18) !important;
+            transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+        }
+
+        #sidebar-wrapper .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #4338CA 0%, #4F46E5 100%) !important;
+            color: #FFFFFF !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 7px 18px rgba(79, 70, 229, 0.25) !important;
+        }
+
+        #sidebar-wrapper .btn-primary-custom i {
+            color: #FFFFFF !important;
+        }
+
+        /* Text helpers */
+        #sidebar-wrapper .text-white {
+            color: #0F172A !important;
+        }
+
+        #sidebar-wrapper .text-white-50 {
+            color: #64748B !important;
+        }
+
+        #sidebar-wrapper .border-top {
+            border-top-color: #E2E8F0 !important;
+        }
+
+        #sidebar-wrapper .border-bottom {
+            border-bottom-color: #E2E8F0 !important;
+        }
+
+        /* Scrollbar */
+        #sidebar-wrapper::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-track {
+            background: #FFFFFF !important;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb {
+            background: #CBD5E1 !important;
+            border-radius: 10px !important;
+        }
+
+        #sidebar-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8 !important;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                background: #FFFFFF !important;
+            }
+
+            #sidebar-wrapper .sidebar-heading {
+                padding: 20px 16px !important;
+            }
+
+            #sidebar-wrapper .sidebar-nav .nav-link {
+                margin: 3px 8px !important;
+                padding: 11px 13px !important;
+            }
+        }
+
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="d-flex" id="wrapper">
+    {% if user.is_authenticated %}
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <div class="sidebar-heading">
+            <div class="brand-badge">K</div>
+            <div>
+                <div class="fw-bold fs-4 text-white lh-1">KarobarPlus</div>
+                <small class="text-white-10 fs-10"><small>Recovery & Sales</small></small>
+            </div>
+        </div>
+
+        <div class="sidebar-nav">
+            {% if request.resolver_match.app_name == 'platform_admin' %}
+            <a href="{% url 'platform_admin:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %} text-warning">
+                <i class="bi bi-speedometer2"></i> Admin Dashboard
+            </a>
+            <a href="{% url 'platform_admin:business_list' %}" class="nav-link {% if request.resolver_match.url_name == 'business_list' or request.resolver_match.url_name == 'business_detail' %}active{% endif %}">
+                <i class="bi bi-building"></i> Registered Businesses
+            </a>
+            <a href="{% url 'platform_admin:ai_metrics' %}" class="nav-link {% if request.resolver_match.url_name == 'ai_metrics' %}active{% endif %}">
+                <i class="bi bi-robot"></i> AI Analytics & Impact
+            </a>
+            {% else %}
+            <a href="{% url 'dashboard:index' %}" class="nav-link {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="{% url 'customers:list' %}" class="nav-link {% if request.resolver_match.app_name == 'customers' %}active{% endif %}">
+                <i class="bi bi-people"></i> Customers
+            </a>
+            <a href="{% url 'udhaar:list' %}" class="nav-link {% if request.resolver_match.app_name == 'udhaar' %}active{% endif %}">
+                <i class="bi bi-cash-stack"></i> Customer Udhaar (Receivable)
+            </a>
+            <a href="{% url 'suppliers:list' %}" class="nav-link {% if request.resolver_match.app_name == 'suppliers' and request.resolver_match.url_name != 'payable_list' %}active{% endif %}">
+                <i class="bi bi-truck"></i> Suppliers
+            </a>
+            <a href="{% url 'suppliers:payable_list' %}" class="nav-link {% if request.resolver_match.app_name == 'suppliers' and request.resolver_match.url_name == 'payable_list' %}active{% endif %}">
+                <i class="bi bi-wallet2"></i> Supplier Udhaar (Payable)
+            </a>
+            <a href="{% url 'sales:list' %}" class="nav-link {% if request.resolver_match.app_name == 'sales' %}active{% endif %}">
+                <i class="bi bi-cart-check"></i> Sales
+            </a>
+            <a href="{% url 'products:list' %}" class="nav-link {% if request.resolver_match.app_name == 'products' %}active{% endif %}">
+                <i class="bi bi-box-seam"></i> Products
+            </a>
+            <a href="{% url 'whatsapp:inbox' %}" class="nav-link {% if request.resolver_match.app_name == 'whatsapp' %}active{% endif %}">
+                <i class="bi bi-whatsapp"></i> WhatsApp
+            </a>
+            <a href="{% url 'promotions:list' %}" class="nav-link {% if request.resolver_match.app_name == 'promotions' %}active{% endif %}">
+                <i class="bi bi-megaphone"></i> Promotions & Offers
+            </a>
+            <a href="{% url 'payments:list' %}" class="nav-link {% if request.resolver_match.app_name == 'payments' %}active{% endif %}">
+                <i class="bi bi-credit-card"></i> Payments
+            </a>
+            <a href="{% url 'ai_advisor:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'ai_advisor' %}active{% endif %}">
+                <i class="bi bi-cpu-fill"></i> AI Advisor
+            </a>
+            <a href="{% url 'settings_app:index' %}" class="nav-link {% if request.resolver_match.app_name == 'settings_app' %}active{% endif %}">
+                <i class="bi bi-gear"></i> Settings
+            </a>
+            {% if user.is_superuser or user.is_staff %}
+            <a href="{% url 'platform_admin:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'platform_admin' %}active{% endif %} text-warning">
+                <i class="bi bi-shield-check"></i> Platform Admin
+            </a>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Quick Action Footer in Sidebar -->
+        <div class="p-3 border-top border-slate-800">
+            {% if request.resolver_match.app_name == 'platform_admin' %}
+            <a href="{% url 'platform_admin:business_list' %}" class="btn btn-outline-warning w-100 py-2 d-flex align-items-center justify-content-center gap-2 fs-7">
+                <i class="bi bi-building"></i> Manage Stores
+            </a>
+            {% else %}
+            <a href="{% url 'sales:create' %}" class="btn btn-primary-custom w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-plus-circle-fill"></i> New Sale
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" {% if not user.is_authenticated %}style="margin-left:0; width:100%;"{% endif %}>
+        {% if user.is_authenticated %}
+        <!-- Redesigned SaaS Top Navigation Header -->
+        <header class="top-header d-flex align-items-center justify-content-between">
+            <!-- Left Side: Mobile Toggle, Store Pill, Global Omnibox Search -->
+            <div class="d-flex align-items-center gap-3">
+                <button class="header-icon-btn d-lg-none" id="menu-toggle" aria-label="Toggle navigation">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="tenant-pill" title="Current Store / Workspace">
+                    {% if request.resolver_match.app_name == 'platform_admin' %}
+                        <div class="tenant-icon-wrap bg-warning-subtle text-warning-emphasis">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <span class="text-slate-800">Platform Admin</span>
+                        <span class="status-pulse-dot ms-1" title="System Active"></span>
+                    {% else %}
+                        <div class="tenant-icon-wrap">
+                            <i class="bi bi-building-fill"></i>
+                        </div>
+                        <span class="fw-bold text-slate-800 fs-7">{{ current_business.name|default:"My Business" }}</span>
+                        <span class="status-pulse-dot ms-1" title="Live Store Sync Active"></span>
+                        <i class="bi bi-chevron-expand fs-8 text-muted opacity-75 ms-1"></i>
+                    {% endif %}
+                </div>
+
+                <!-- Global SaaS Omnibox Search -->
+                {% if request.resolver_match.app_name != 'platform_admin' %}
+                <div class="nav-search-bar d-none d-md-block">
+                    <i class="bi bi-search nav-search-icon"></i>
+                    <input type="text" placeholder="Search customers, sales, udhaar..." aria-label="Search dashboard">
+                    <kbd class="search-kbd">Ctrl K</kbd>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Side: Actions, Simulator, Notifications, User Profile -->
+            <div class="d-flex align-items-center gap-2 gap-sm-3">
+                {% if request.resolver_match.app_name != 'platform_admin' %}
+                <!-- Quick Sale Header Action -->
+                <a href="{% url 'sales:create' %}" class="btn-header-action d-none d-lg-flex align-items-center gap-2">
+                    <i class="bi bi-plus-lg"></i>
+                    <span>New Sale</span>
+                </a>
+
+                <!-- WhatsApp Sandbox Badge -->
+                <a href="{% url 'whatsapp:sandbox' %}" class="btn-simulator d-flex align-items-center gap-2">
+                    <span class="status-pulse-dot"></span>
+                    <i class="bi bi-whatsapp fs-7"></i>
+                    <span class="d-none d-sm-inline">Sandbox Simulator</span>
+                </a>
+                {% endif %}
+
+                <!-- Notification Dropdown -->
+                <div class="dropdown">
+                    <button class="header-icon-btn position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                        <i class="bi bi-bell"></i>
+                        {% if unread_notifications_count > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                        {% endif %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end saas-dropdown-menu rounded-4 p-2 mt-2" style="width: 330px;">
+                        <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fw-bold text-dark fs-7">Notifications</span>
+                                {% if unread_notifications_count > 0 %}
+                                <span class="badge bg-indigo-subtle text-primary rounded-pill fs-8">{{ unread_notifications_count }} new</span>
+                                {% endif %}
+                            </div>
+                            {% if unread_notifications_count > 0 %}
+                            <a href="{% url 'notifications:mark_all_read' %}" class="text-decoration-none text-primary fs-8 fw-semibold">Mark all read</a>
+                            {% endif %}
+                        </div>
+                        <div class="list-group list-group-flush fs-7" style="max-height: 290px; overflow-y: auto;">
+                            {% for notif in recent_notifications %}
+                            <a href="{% if notif.link %}{{ notif.link }}{% else %}#{% endif %}" class="list-group-item list-group-item-action py-2 px-3 border-0 rounded-3 mb-1 {% if not notif.is_read %}bg-light fw-medium{% endif %}">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="bi bi-info-circle text-primary mt-1 fs-7"></i>
+                                    <div class="w-100">
+                                        <div class="text-dark fw-semibold fs-7">{{ notif.title }}</div>
+                                        <div class="text-muted fs-8 lh-sm">{{ notif.message }}</div>
+                                        <small class="text-secondary opacity-75 fs-8">{{ notif.created_at|timesince }} ago</small>
+                                    </div>
+                                </div>
+                            </a>
+                            {% empty %}
+                            <div class="text-center py-4 text-muted fs-7">
+                                <i class="bi bi-bell-slash d-block fs-4 text-muted opacity-50 mb-1"></i>
+                                No new notifications
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile Dropdown -->
+                <div class="dropdown">
+                    <div class="user-profile-pill" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                        <div class="avatar-container">
+                            <div class="avatar-initial">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            <span class="avatar-status-badge"></span>
+                        </div>
+                        <div class="d-none d-md-flex flex-column text-start lh-1 pe-1">
+                            <span class="fw-bold text-slate-800 fs-7 mb-1">{{ user.username }}</span>
+                            <span class="text-muted fs-8" style="font-size: 0.725rem;">{% if user.is_superuser %}Admin{% else %}Owner{% endif %}</span>
+                        </div>
+                        <i class="bi bi-chevron-down fs-8 text-muted ms-1"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end saas-dropdown-menu rounded-3 mt-2 p-2" style="min-width: 210px;">
+                        <li class="px-3 py-2 border-bottom mb-1 bg-light-subtle rounded-2">
+                            <div class="fw-bold text-dark fs-7">{{ user.username }}</div>
+                            <div class="text-muted fs-8">{{ user.email|default:"Active Account" }}</div>
+                        </li>
+                        {% if request.resolver_match.app_name != 'platform_admin' %}
+                        <li>
+                            <a class="dropdown-item rounded-2 py-2 fs-7 fw-medium text-secondary d-flex align-items-center gap-2" href="{% url 'settings_app:index' %}">
+                                <i class="bi bi-gear text-slate-600 fs-7"></i> Account Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item rounded-2 py-2 fs-7 fw-medium text-secondary d-flex align-items-center gap-2" href="{% url 'ai_advisor:dashboard' %}">
+                                <i class="bi bi-cpu text-indigo fs-7"></i> AI Advisor
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        {% endif %}
+                        <li>
+                            <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item rounded-2 py-2 fs-7 fw-medium text-danger d-flex align-items-center gap-2">
+                                    <i class="bi bi-box-arrow-right fs-7"></i> Log out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        {% endif %}
+
+        <!-- Alert Banners -->
+        <div class="container-fluid px-4 pt-3">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show border-0 shadow-sm rounded-3" role="alert">
+                    <i class="bi bi-info-circle-fill me-2"></i> {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Main Content Injection -->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar Toggle JS
+    document.getElementById("menu-toggle")?.addEventListener("click", function(e) {
+        e.preventDefault();
+        document.getElementById("wrapper")?.classList.toggle("toggled");
+    });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

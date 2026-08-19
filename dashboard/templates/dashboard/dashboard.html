@@ -1,0 +1,897 @@
+{% extends "base.html" %}
+{% load indian_formatting %}
+
+{% block title %}Dashboard | KarobarPlus{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        /* ---- Core palette ---- */
+        --canvas: #f6f7fb;
+        --surface: #ffffff;
+        --ink: #12172b;
+        --ink-soft: #3d4459;
+        --ink-muted: #767e95;
+        --line: #e7e9f2;
+        --line-soft: #f0f1f7;
+
+        /* ---- Brand / ledger navy ---- */
+        --navy-900: #0b1330;
+        --navy-800: #141c3d;
+        --navy-700: #202a52;
+
+        /* ---- Receivable (amber ledger stamp) ---- */
+        --ar-ink: #92400e;
+        --ar-accent: #c2740c;
+        --ar-tint: #fdf6ea;
+        --ar-tint-line: #f3e3c3;
+        --ar-chip: #fbead0;
+
+        /* ---- Payable (rose ledger stamp) ---- */
+        --ap-ink: #9f1d1d;
+        --ap-accent: #c2410c;
+        --ap-red: #c62828;
+        --ap-tint: #fdf1ef;
+        --ap-tint-line: #f4d9d4;
+        --ap-chip: #fadfd9;
+
+        --good: #157a4a;
+        --good-tint: #eaf7f0;
+
+        --radius-lg: 18px;
+        --radius-md: 13px;
+        --radius-sm: 9px;
+        --shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.04), 0 1px 3px rgba(18, 23, 43, 0.05);
+        --shadow-md: 0 8px 20px rgba(18, 23, 43, 0.07), 0 2px 6px rgba(18, 23, 43, 0.05);
+        --shadow-navy: 0 18px 40px -12px rgba(11, 19, 48, 0.45);
+    }
+
+    .page-shell {
+        background: var(--canvas);
+        margin: -1.5rem;
+        padding: 1.75rem 2rem 3rem;
+        min-height: 100%;
+        font-family: 'Inter', -apple-system, sans-serif;
+        color: var(--ink);
+    }
+
+    .page-shell h1, .page-shell h2, .page-shell h3,
+    .page-shell h4, .page-shell h5, .page-shell h6,
+    .display-face {
+        font-family: 'Sora', 'Inter', sans-serif;
+        letter-spacing: -0.015em;
+    }
+
+    .mono-face {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-feature-settings: "tnum" 1;
+    }
+
+    .tnum { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+    /* ---------- Header ---------- */
+    .dash-header {
+        margin-bottom: 1.75rem;
+    }
+    .dash-header .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 0.35rem;
+    }
+    .dash-header h3 {
+        font-size: 1.7rem;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.2rem;
+    }
+    .dash-header p {
+        color: var(--ink-muted);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .btn-saas {
+        border-radius: 10px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 0.84rem;
+        padding: 0.6rem 1.05rem;
+        border: 1px solid transparent;
+        transition: all .15s ease;
+        letter-spacing: -0.005em;
+    }
+    .btn-saas-primary {
+        background: var(--navy-900);
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+    }
+    .btn-saas-primary:hover { background: var(--navy-800); color:#fff; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-saas-outline {
+        background: #fff;
+        color: var(--ink);
+        border-color: var(--line);
+    }
+    .btn-saas-outline:hover { border-color: #c7cbdc; background:#fafbfd; }
+    .btn-saas-warn {
+        background: var(--ar-chip);
+        color: var(--ar-ink);
+        border-color: var(--ar-tint-line);
+    }
+    .btn-saas-warn:hover { background: #f6dfb3; color: var(--ar-ink); }
+
+    /* ---------- Money Position Banner (ledger statement card) ---------- */
+    .position-banner {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius-lg);
+        padding: 2rem 2.25rem;
+        color: #fff;
+        box-shadow: var(--shadow-navy);
+        background:
+            radial-gradient(900px 260px at 8% -10%, rgba(255,255,255,0.07) 0%, transparent 60%),
+            linear-gradient(155deg, var(--navy-800) 0%, var(--navy-900) 65%);
+        margin-bottom: 2rem;
+    }
+    /* ledger rule texture — faint horizontal lines like a khata page */
+    .position-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 27px,
+            rgba(255,255,255,0.035) 28px
+        );
+        pointer-events: none;
+    }
+    .position-banner::after {
+        content: "";
+        position: absolute;
+        right: -20px; top: -20px;
+        width: 260px; height: 260px;
+        background: radial-gradient(circle, rgba(194,116,12,0.16) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .position-inner { position: relative; z-index: 1; }
+
+    .position-eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        color: #97a2c8;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .position-eyebrow .live-dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: #4ade80;
+        box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18);
+    }
+    .position-value {
+        font-family: 'Sora', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-top: 0.3rem;
+        line-height: 1.1;
+    }
+    .position-value.positive { color: #6ee7b7; }
+    .position-value.negative { color: #fca5a5; }
+    .position-formula {
+        color: #8891b5;
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .position-formula b { color: #c7cce2; font-weight: 600; }
+
+    .position-chip {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: var(--radius-md);
+        padding: 0.85rem 1.3rem;
+        min-width: 168px;
+        backdrop-filter: blur(8px);
+    }
+    .position-chip small {
+        color: #97a2c8;
+        font-size: 0.66rem;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .position-chip .chip-value {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        display: block;
+        margin-top: 0.25rem;
+    }
+
+    /* ---------- Section Panel: identity rail + metrics table ---------- */
+    .section-panel {
+        display: grid;
+        grid-template-columns: 258px 1fr;
+        background: var(--surface);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        border: 1px solid var(--line-soft);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 1.85rem;
+    }
+
+    .section-identity {
+        position: relative;
+        overflow: hidden;
+        padding: 1.75rem 1.6rem;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .section-identity::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            to bottom, transparent 0, transparent 25px, rgba(255,255,255,0.05) 26px
+        );
+        pointer-events: none;
+    }
+    .section-identity::after {
+        content: "";
+        position: absolute;
+        right: -40px; bottom: -40px;
+        width: 180px; height: 180px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.06);
+        pointer-events: none;
+    }
+    .id-receivable { background: linear-gradient(165deg, #c98a2e 0%, #a1620f 100%); }
+    .id-payable { background: linear-gradient(165deg, #cf5b3e 0%, #a1281c 100%); }
+
+    .id-icon {
+        width: 46px; height: 46px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.22);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        position: relative; z-index: 1;
+    }
+    .id-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        background: rgba(255,255,255,0.16);
+        padding: 0.3rem 0.55rem;
+        border-radius: 6px;
+        display: inline-flex;
+        width: fit-content;
+        position: relative; z-index: 1;
+    }
+    .id-title {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 1.3rem;
+        letter-spacing: -0.015em;
+        position: relative; z-index: 1;
+        line-height: 1.2;
+    }
+    .id-title .sub {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.75);
+        margin-top: 0.15rem;
+    }
+    .id-desc {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.82);
+        line-height: 1.5;
+        position: relative; z-index: 1;
+    }
+    .id-link {
+        margin-top: auto;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 0.55rem 0.85rem;
+        border-radius: 9px;
+        width: fit-content;
+        position: relative; z-index: 1;
+        transition: background .15s ease;
+    }
+    .id-link:hover { background: rgba(255,255,255,0.24); color: #fff; }
+
+    /* ---------- Metrics table (2x2 grid, cross dividers) ---------- */
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+    .metric-cell {
+        padding: 1.4rem 1.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        border-right: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--line-soft);
+        transition: background .15s ease;
+    }
+    .metric-cell:hover { background: var(--canvas); }
+    .metric-cell:nth-child(2n) { border-right: none; }
+    .metric-cell:nth-child(n+3) { border-bottom: none; }
+
+    .metric-head { display: flex; align-items: center; gap: 0.55rem; }
+    .metric-icon {
+        width: 27px; height: 27px;
+        border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+    }
+    .metric-icon.i-primary { background: #eef0ff; color: #4338ca; }
+    .metric-icon.i-warning { background: var(--ar-chip); color: var(--ar-accent); }
+    .metric-icon.i-success { background: var(--good-tint); color: var(--good); }
+    .metric-icon.i-danger  { background: var(--ap-chip); color: var(--ap-red); }
+
+    .metric-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        color: var(--ink-muted);
+    }
+    .metric-value {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 1.9rem;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        color: var(--ink);
+    }
+    .metric-value.tone-warning { color: var(--ar-accent); }
+    .metric-value.tone-danger { color: var(--ap-red); }
+    .metric-value.tone-success { color: var(--good); }
+    .metric-value small { font-family: 'Inter', sans-serif; font-weight: 500; color: var(--ink-muted); font-size: 0.9rem; }
+
+    .metric-foot {
+        font-size: 0.79rem;
+        color: var(--ink-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.32rem;
+        margin-top: auto;
+    }
+    .metric-foot.alert { color: var(--ap-red); font-weight: 600; }
+    .metric-foot strong { color: var(--ink); font-weight: 700; }
+    .metric-foot i { font-size: 0.82rem; }
+
+    @media (max-width: 767px) {
+        .section-panel { grid-template-columns: 1fr; }
+        .id-desc { display: none; }
+        .section-identity { flex-direction: row; align-items: center; padding: 1.25rem 1.4rem; }
+        .id-link { margin-top: 0; margin-left: auto; }
+    }
+    @media (max-width: 480px) {
+        .metrics-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: none;   /* stop forcing equal-height rows in single column */
+            grid-auto-rows: auto;       /* each cell sizes to its own content */
+        }
+        .metric-cell { border-right: none !important; border-bottom: 1px solid var(--line-soft); }
+        .metric-cell:last-child { border-bottom: none; }
+    }
+
+    /* ---------- KPI Cards ---------- */
+    .kpi-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-md);
+        padding: 1.3rem 1.35rem;
+        height: 100%;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    .kpi-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+        border-color: var(--line);
+    }
+    .kpi-top {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        margin-bottom: 0.85rem;
+    }
+    .kpi-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
+        font-family: 'Inter', sans-serif;
+        padding-top: 0.2rem;
+    }
+    .kpi-icon {
+        width: 36px; height: 36px;
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .kpi-icon.i-primary { background: #eef0ff; color: #4338ca; }
+    .kpi-icon.i-warning { background: var(--ar-chip); color: var(--ar-accent); }
+    .kpi-icon.i-success { background: var(--good-tint); color: var(--good); }
+    .kpi-icon.i-danger  { background: var(--ap-chip); color: var(--ap-red); }
+
+    .kpi-body { flex: 1 1 auto; }
+
+    .kpi-value {
+        font-family: 'Sora', sans-serif;
+        font-size: 1.85rem;
+        font-weight: 700;
+        color: var(--ink);
+        letter-spacing: -0.015em;
+        line-height: 1.1;
+    }
+    .kpi-value.tone-warning { color: var(--ar-accent); }
+    .kpi-value.tone-danger { color: var(--ap-red); }
+    .kpi-value.tone-success { color: var(--good); }
+    .kpi-value small { font-family: 'Inter', sans-serif; font-weight: 500; color: var(--ink-muted); font-size: 1rem; }
+
+    .kpi-foot {
+        font-size: 0.8rem;
+        color: var(--ink-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        line-height: 1.3;
+        padding-top: 0.75rem;
+        margin-top: 0.5rem;
+        border-top: 1px dashed var(--line);
+    }
+    .kpi-foot.alert { color: var(--ap-red); font-weight: 600; }
+    .kpi-foot strong { color: var(--ink); font-weight: 700; }
+    .kpi-foot i { line-height: 1; font-size: 0.85rem; }
+
+    /* ---------- Money Flow / Table Cards ---------- */
+    .flow-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 1.5rem 1.1rem;
+        height: 100%;
+        box-shadow: var(--shadow-sm);
+    }
+    .flow-head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 1rem;
+        padding-bottom: 0.9rem;
+        border-bottom: 1px solid var(--line-soft);
+    }
+    .flow-title {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: var(--ink);
+        display:flex; align-items:center; gap:0.55rem;
+    }
+    .flow-title .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-in { background: var(--good); box-shadow: 0 0 0 3px rgba(21,122,74,0.15); }
+    .dot-out { background: var(--ap-red); box-shadow: 0 0 0 3px rgba(198,40,40,0.15); }
+    .flow-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.65rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--ink-muted);
+        text-transform: uppercase;
+        background: var(--canvas);
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+    }
+
+    .table-saas {
+        --bs-table-bg: transparent;
+        margin-bottom: 0;
+    }
+    .table-saas thead th {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-muted);
+        font-weight: 700;
+        border-bottom: 1px solid var(--line-soft);
+        padding-bottom: 0.65rem;
+        font-family: 'Inter', sans-serif;
+    }
+    .table-saas tbody td {
+        font-size: 0.87rem;
+        padding: 0.75rem 0.4rem;
+        border-bottom: 1px solid var(--line-soft);
+        color: var(--ink-soft);
+    }
+    .table-saas tbody tr:last-child td { border-bottom: none; }
+    .table-saas tbody tr:hover td { background: var(--canvas); }
+    .table-saas td.amt { font-family: 'Inter', sans-serif; font-weight: 700; }
+
+    /* ---------- Chart Cards ---------- */
+    .chart-card {
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem 1.5rem 1.2rem;
+        height: 100%;
+        box-shadow: var(--shadow-sm);
+    }
+    .chart-head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 1.1rem;
+    }
+    .chart-title {
+        font-family: 'Sora', sans-serif;
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    @media (max-width: 767px) {
+        .page-shell { margin: -1rem; padding: 1.1rem; }
+        .position-banner { padding: 1.5rem; }
+        .position-value { font-size: 1.85rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-shell">
+
+    <!-- Welcome & Quick Action Bar -->
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3 dash-header">
+        <div>
+            <span class="eyebrow">Dashboard · {% now "d M Y" %}</span>
+            <h3>Business Overview</h3>
+            <p>Real-time pulse of sales, receivables, payables, and net money position.</p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'sales:create' %}" class="btn btn-saas btn-saas-primary d-flex align-items-center gap-2">
+                <i class="bi bi-cart-plus-fill"></i> Record Sale
+            </a>
+            <a href="{% url 'suppliers:purchase_create' %}" class="btn btn-saas btn-saas-outline d-flex align-items-center gap-2">
+                <i class="bi bi-cart-plus"></i> Supplier Purchase
+            </a>
+            <a href="{% url 'udhaar:create' %}" class="btn btn-saas btn-saas-warn d-flex align-items-center gap-2">
+                <i class="bi bi-cash-stack"></i> Add Customer Credit
+            </a>
+        </div>
+    </div>
+
+    <!-- Money Position Banner -->
+    <div class="position-banner">
+        <div class="position-inner d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+            <div>
+                <span class="position-eyebrow"><span class="live-dot"></span>Net Money Position</span>
+                <div class="position-value tnum {% if net_receivable_position >= 0 %}positive{% else %}negative{% endif %}">
+                    ₹{{ net_receivable_position|floatformat:2 }}
+                </div>
+                <div class="position-formula">
+                    Receivable <b>₹{{ customer_receivable|floatformat:2 }}</b> − Payable <b>₹{{ supplier_payable|floatformat:2 }}</b>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <div class="position-chip text-center">
+                    <small>AR · Receivable</small>
+                    <span class="chip-value tnum" style="color:#f2b352;">₹{{ customer_receivable|floatformat:2 }}</span>
+                </div>
+                <div class="position-chip text-center">
+                    <small>AP · Payable</small>
+                    <span class="chip-value tnum" style="color:#fca5a5;">₹{{ supplier_payable|floatformat:2 }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1 — CUSTOMER UDHAAR (RECEIVABLE)                      -->
+    <!-- ============================================================ -->
+    <div class="section-panel">
+        <div class="section-identity id-receivable">
+            <span class="id-icon"><i class="bi bi-cash-stack"></i></span>
+            <div>
+                <span class="id-tag">AR · RECEIVABLES</span>
+                <div class="id-title mt-2">Customer Udhaar<span class="sub">Receivable</span></div>
+            </div>
+            <p class="id-desc">What customers owe you — sales, outstanding balances, and recovery.</p>
+            <a href="{% url 'udhaar:list' %}" class="id-link">
+                View Register <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-primary"><i class="bi bi-bag-check-fill"></i></span>
+                    <span class="metric-label">Today's Sales</span>
+                </div>
+                <div class="metric-value tnum">{{ todays_sales|inr }}</div>
+                <div class="metric-foot">Month: <strong class="tnum">{{ months_sales|inr }}</strong></div>
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-warning"><i class="bi bi-clock-history"></i></span>
+                    <span class="metric-label">Customer Outstanding</span>
+                </div>
+                <div class="metric-value tone-warning tnum">{{ total_outstanding|inr }}</div>
+                <div class="metric-foot  "><i class="bi bi-exclamation-triangle"></i> Overdue: <span class="tnum"><strong>{{ overdue_amount|inr }}</strong></span></div>
+               
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-success"><i class="bi bi-shield-check"></i></span>
+                    <span class="metric-label">Customer Recovered</span>
+                </div>
+                <div class="metric-value tone-success tnum">{{ amount_recovered|inr }}</div>
+                <div class="metric-foot">Due Today: <strong class="tnum">{{ due_today_count }} customers</strong></div>
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-danger"><i class="bi bi-box-seam"></i></span>
+                    <span class="metric-label">Stock Alerts</span>
+                </div>
+                <div class="metric-value tnum">{{ low_stock_count }} <small>low</small></div>
+                <div class="metric-foot">Out of stock: <strong class="tnum">{{ out_of_stock_count }} items</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2 — SUPPLIER UDHAAR (PAYABLE)                         -->
+    <!-- ============================================================ -->
+    <div class="section-panel">
+        <div class="section-identity id-payable">
+            <span class="id-icon"><i class="bi bi-wallet2"></i></span>
+            <div>
+                <span class="id-tag">AP · PAYABLES</span>
+                <div class="id-title mt-2">Supplier Udhaar<span class="sub">Payable</span></div>
+            </div>
+            <p class="id-desc">What you owe suppliers — bills, due dates, and settlements.</p>
+            <a href="{% url 'suppliers:payable_list' %}" class="id-link">
+                View Register <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-danger"><i class="bi bi-truck"></i></span>
+                    <span class="metric-label">Total Supplier Payable</span>
+                </div>
+                <div class="metric-value tone-danger tnum">₹{{ total_supplier_payable|floatformat:2 }}</div>
+                <div class="metric-foot">Suppliers Owed: <strong class="tnum">{{ suppliers_owed_count }}</strong></div>
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-danger"><i class="bi bi-exclamation-octagon"></i></span>
+                    <span class="metric-label">Overdue Payable</span>
+                </div>
+                <div class="metric-value tone-danger tnum">₹{{ overdue_supplier_payable|floatformat:2 }}</div>
+                <div class="metric-foot">Past Supplier Due Date</div>
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-warning"><i class="bi bi-calendar-event"></i></span>
+                    <span class="metric-label">Due Today / Soon</span>
+                </div>
+                <div class="metric-value tnum">{{ supplier_due_today_count }} / {{ supplier_due_soon_count }}</div>
+                <div class="metric-foot">Upcoming Payments</div>
+            </div>
+
+            <div class="metric-cell">
+                <div class="metric-head">
+                    <span class="metric-icon i-success"><i class="bi bi-check-circle"></i></span>
+                    <span class="metric-label">Paid This Month</span>
+                </div>
+                <div class="metric-value tone-success tnum">₹{{ paid_supplier_this_month|floatformat:2 }}</div>
+                <div class="metric-foot" style="color:var(--good);">Settled to Suppliers</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 3. Upcoming Money Flow (In vs Out)                            -->
+    <!-- ============================================================ -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="flow-card">
+                <div class="flow-head">
+                    <span class="flow-title"><span class="dot dot-in"></span> Expected Customer Collections</span>
+                    <span class="flow-badge">Money In</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-saas align-middle">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in upcoming_customer_receivables %}
+                            <tr>
+                                <td class="fw-semibold" style="color: var(--ink);">{{ u.customer.name }}</td>
+                                <td class="text-muted">{{ u.due_date|date:"d M Y" }}</td>
+                                <td class="text-end amt tnum" style="color: var(--ar-accent);">₹{{ u.remaining_amount|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No pending customer receivables.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="flow-card">
+                <div class="flow-head">
+                    <span class="flow-title"><span class="dot dot-out"></span> Upcoming Supplier Payments</span>
+                    <span class="flow-badge">Money Out</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-saas align-middle">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Remaining Payable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sp in upcoming_supplier_payments %}
+                            <tr>
+                                <td class="fw-semibold" style="color: var(--ink);">{{ sp.supplier.supplier_name }}</td>
+                                <td class="text-muted">{{ sp.due_date|date:"d M Y" }}</td>
+                                <td class="text-end amt tnum" style="color: var(--ap-red);">₹{{ sp.remaining_payable|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">No upcoming supplier payment commitments.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 4. Interactive Charts Row                                     -->
+    <!-- ============================================================ -->
+    <div class="row g-3">
+        <div class="col-12 col-lg-8">
+            <div class="chart-card">
+                <div class="chart-head">
+                    <span class="chart-title"><i class="bi bi-graph-up" style="color:#4338ca;"></i>Sales Performance <span class="text-muted fw-normal fs-8">Last 7 days</span></span>
+                    <a href="{% url 'sales:list' %}" class="fs-8 fw-semibold text-decoration-none" style="color:#4338ca;">View Sales Register</a>
+                </div>
+                <div style="height: 260px; position: relative;">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="chart-card">
+                <div class="chart-head">
+                    <span class="chart-title"><i class="bi bi-pie-chart" style="color: var(--ar-accent);"></i>Udhaar Recovery Ratio</span>
+                </div>
+                <div style="height: 230px; position: relative;">
+                    <canvas id="udhaarPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+
+    // 1. Sales Trend Line Chart
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: {{ sales_chart_labels|safe }},
+            datasets: [{
+                label: 'Daily Sales (₹)',
+                data: {{ sales_chart_data|safe }},
+                borderColor: '#4338ca',
+                backgroundColor: 'rgba(67, 56, 202, 0.07)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 3,
+                pointBackgroundColor: '#4338ca',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f0f1f7' }, border: { display: false } },
+                x: { grid: { display: false }, border: { display: false } }
+            }
+        }
+    });
+
+    // 2. Udhaar Recovery Ratio Donut Chart
+    const pieCtx = document.getElementById('udhaarPieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ udhaar_pie_labels|safe }},
+            datasets: [{
+                data: {{ udhaar_pie_data|safe }},
+                backgroundColor: ['#157a4a', '#c62828'],
+                borderWidth: 3,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, padding: 16, font: { size: 11 } } }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

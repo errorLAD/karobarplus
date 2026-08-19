@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% load indian_formatting %}
+
+{% block title %}Suppliers Catalog | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="udhaar">
+<style>
+/* ==========================================================================
+   Udhaar CRM — Design System (page-scoped)
+   NOTE: this token set + component layer is currently scoped to `.udhaar` so
+   it can ship on a single page without touching base.html. Once more pages
+   are redesigned, promote this block into a shared /static/css/udhaar.css
+   and drop the `.udhaar` prefix from the variable declarations.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.udhaar {
+    --u-ink: #12172B;
+    --u-ink-soft: #4B5268;
+    --u-muted: #8A90A3;
+    --u-line: #E7E9F2;
+    --u-line-soft: #F0F1F7;
+    --u-surface: #FFFFFF;
+    --u-bg: #F6F7FB;
+
+    --u-primary: #1E2A4A;
+    --u-primary-hover: #16213D;
+    --u-primary-tint: #EDF0F7;
+
+    --u-gold: #B8863B;
+    --u-gold-tint: #FBF3E4;
+
+    --u-success: #158A4D;
+    --u-success-tint: #E9F7EF;
+    --u-warning: #B7690A;
+    --u-warning-tint: #FDF1E1;
+    --u-danger: #C0362C;
+    --u-danger-tint: #FBEBEA;
+
+    --u-radius-sm: 8px;
+    --u-radius: 12px;
+    --u-radius-lg: 16px;
+    --u-shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.05);
+    --u-shadow: 0 4px 16px rgba(18, 23, 43, 0.06);
+    --u-shadow-lg: 0 12px 32px rgba(18, 23, 43, 0.10);
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--u-ink);
+    background: var(--u-bg);
+    padding: 4px 4px 32px;
+}
+
+.udhaar * { box-sizing: border-box; }
+
+.udhaar .u-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--u-gold);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.udhaar h3.u-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--u-ink);
+    margin: 0 0 4px;
+}
+
+.udhaar .u-subtitle {
+    color: var(--u-ink-soft);
+    font-size: 14px;
+    margin: 0;
+    max-width: 52ch;
+}
+
+/* ---- Buttons ---- */
+.udhaar .u-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.udhaar .u-btn:active { transform: translateY(1px); }
+
+.udhaar .u-btn-primary {
+    background: var(--u-primary);
+    color: #fff;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-btn-primary:hover { background: var(--u-primary-hover); color: #fff; }
+
+.udhaar .u-btn-secondary {
+    background: var(--u-surface);
+    color: var(--u-ink);
+    border-color: var(--u-line);
+}
+.udhaar .u-btn-secondary:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+
+.udhaar .u-btn-ghost {
+    background: transparent;
+    color: var(--u-ink-soft);
+    border-color: transparent;
+    padding: 7px 10px;
+}
+.udhaar .u-btn-ghost:hover { background: var(--u-line-soft); color: var(--u-ink); }
+
+.udhaar .u-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid var(--u-line);
+    background: var(--u-surface);
+    color: var(--u-ink-soft);
+    transition: all 0.15s ease;
+}
+.udhaar .u-icon-btn:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+.udhaar .u-icon-btn.danger:hover { border-color: var(--u-danger); color: var(--u-danger); background: var(--u-danger-tint); }
+
+/* ---- Stat cards ---- */
+.udhaar .u-stat {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--u-shadow-sm);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+.udhaar .u-stat::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--u-stat-accent, var(--u-line));
+}
+.udhaar .u-stat--payable { --u-stat-accent: var(--u-gold); }
+.udhaar .u-stat--paid { --u-stat-accent: var(--u-success); }
+.udhaar .u-stat--total { --u-stat-accent: var(--u-primary); }
+
+.udhaar .u-stat-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--u-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+    margin-bottom: 10px;
+}
+.udhaar .u-stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+}
+.udhaar .u-stat--total .u-stat-value { color: var(--u-ink); }
+.udhaar .u-stat--paid .u-stat-value { color: var(--u-success); }
+.udhaar .u-stat--payable .u-stat-value { color: var(--u-gold); }
+
+/* ---- Search card ---- */
+.udhaar .u-search-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 14px 16px;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-search-input-wrap { position: relative; }
+.udhaar .u-search-input-wrap i {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--u-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+.udhaar .u-search-input {
+    width: 100%;
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 10px 14px 10px 36px;
+    font-size: 14px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.udhaar .u-search-input:focus {
+    outline: none;
+    border-color: var(--u-primary);
+    background: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+
+/* ---- Table card ---- */
+.udhaar .u-table-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    box-shadow: var(--u-shadow-sm);
+    overflow: hidden;
+}
+.udhaar .u-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+.udhaar .u-table thead th {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--u-muted);
+    background: var(--u-line-soft);
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--u-line);
+    white-space: nowrap;
+}
+.udhaar .u-table tbody td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--u-line-soft);
+    vertical-align: middle;
+    color: var(--u-ink-soft);
+}
+.udhaar .u-table tbody tr:last-child td { border-bottom: none; }
+.udhaar .u-table tbody tr { transition: background 0.12s ease; }
+.udhaar .u-table tbody tr:hover { background: var(--u-line-soft); }
+
+.udhaar .u-supplier-name {
+    font-weight: 700;
+    color: var(--u-ink);
+    text-decoration: none;
+}
+.udhaar .u-supplier-name:hover { color: var(--u-primary); }
+
+.udhaar .u-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--u-ink);
+}
+
+.udhaar .u-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+}
+.udhaar .u-badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.udhaar .u-badge--due { background: var(--u-warning-tint); color: var(--u-warning); }
+.udhaar .u-badge--clear { background: var(--u-success-tint); color: var(--u-success); }
+
+/* ---- Empty state ---- */
+.udhaar .u-empty {
+    text-align: center;
+    padding: 72px 24px;
+}
+.udhaar .u-empty-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--u-primary-tint);
+    color: var(--u-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 18px;
+}
+.udhaar .u-empty h5 { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--u-ink); margin-bottom: 6px; }
+.udhaar .u-empty p { color: var(--u-muted); font-size: 13.5px; max-width: 34ch; margin: 0 auto 20px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 767px) {
+    .udhaar .u-table thead { display: none; }
+    .udhaar .u-table, .udhaar .u-table tbody, .udhaar .u-table tr, .udhaar .u-table td { display: block; width: 100%; }
+    .udhaar .u-table tr {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--u-line);
+    }
+    .udhaar .u-table td {
+        border: none;
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+    .udhaar .u-table td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--u-muted);
+        flex-shrink: 0;
+    }
+    .udhaar .u-table td.u-row-actions { justify-content: flex-end; padding-top: 10px; }
+    .udhaar .u-row-actions::before { content: none; }
+}
+</style>
+
+<!-- Page header -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+    <div>
+        <span class="u-eyebrow">Suppliers</span>
+        <h3 class="u-title"><i class="bi bi-truck me-2"></i>Suppliers Directory</h3>
+        <p class="u-subtitle">Manage wholesale suppliers, track purchase history, and monitor outstanding supplier payables.</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a href="{% url 'suppliers:export_suppliers' %}" class="u-btn u-btn-secondary">
+            <i class="bi bi-download"></i> Export CSV
+        </a>
+        <a href="{% url 'suppliers:purchase_create' %}" class="u-btn u-btn-secondary">
+            <i class="bi bi-cart-plus"></i> Record Purchase
+        </a>
+        <a href="{% url 'suppliers:create' %}" class="u-btn u-btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Supplier
+        </a>
+    </div>
+</div>
+
+<!-- Stat cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="u-stat u-stat--total">
+            <span class="u-stat-label">Total Purchases</span>
+            <strong class="u-stat-value">₹{{ tot_purchases|floatformat:2 }}</strong>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="u-stat u-stat--paid">
+            <span class="u-stat-label">Total Paid to Suppliers</span>
+            <strong class="u-stat-value">₹{{ tot_paid|floatformat:2 }}</strong>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="u-stat u-stat--payable">
+            <span class="u-stat-label">Outstanding Supplier Payable</span>
+            <strong class="u-stat-value">₹{{ tot_payable|floatformat:2 }}</strong>
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="u-search-card mb-4">
+    <form method="get" class="row g-2 align-items-center">
+        <div class="col-12 col-md-9">
+            <div class="u-search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ q }}" class="u-search-input" placeholder="Search by supplier name, phone, or company name...">
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <button type="submit" class="u-btn u-btn-primary w-100 justify-content-center">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Suppliers table -->
+<div class="u-table-card">
+    <div class="table-responsive">
+        <table class="u-table">
+            <thead>
+                <tr>
+                    <th>Supplier</th>
+                    <th>Phone</th>
+                    <th>Business / Firm</th>
+                    <th class="text-end">Total Purchases</th>
+                    <th class="text-end">Total Paid</th>
+                    <th class="text-end">Outstanding Payable</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in suppliers %}
+                <tr>
+                    <td data-label="Supplier">
+                        <a href="{% url 'suppliers:detail' s.pk %}" class="u-supplier-name">
+                            {{ s.supplier_name }}
+                        </a>
+                    </td>
+                    <td data-label="Phone">{{ s.phone }}</td>
+                    <td data-label="Business / Firm">{{ s.business_name|default:"—" }}</td>
+                    <td data-label="Total Purchases" class="text-end">
+                        <span class="u-num">₹{{ s.total_purchases|floatformat:2 }}</span>
+                    </td>
+                    <td data-label="Total Paid" class="text-end">
+                        <span class="u-num" style="color: var(--u-success);">₹{{ s.total_paid|floatformat:2 }}</span>
+                    </td>
+                    <td data-label="Outstanding Payable" class="text-end">
+                        {% if s.outstanding_payable > 0 %}
+                            <span class="u-badge u-badge--due">₹{{ s.outstanding_payable|floatformat:2 }} due</span>
+                        {% else %}
+                            <span class="u-badge u-badge--clear">Settled</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end u-row-actions">
+                        <div class="d-flex align-items-center justify-content-end gap-1">
+                            <a href="{% url 'suppliers:detail' s.pk %}" class="u-icon-btn" title="View Profile">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'suppliers:edit' s.pk %}" class="u-icon-btn" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'suppliers:delete' s.pk %}" class="u-icon-btn danger" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">
+                        <div class="u-empty">
+                            <div class="u-empty-icon"><i class="bi bi-truck"></i></div>
+                            <h5>No suppliers yet</h5>
+                            <p>Suppliers you add will show up here with their purchase history and payable balance.</p>
+                            <a href="{% url 'suppliers:create' %}" class="u-btn u-btn-primary">
+                                <i class="bi bi-plus-circle"></i> Add Supplier
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+{% endblock %}

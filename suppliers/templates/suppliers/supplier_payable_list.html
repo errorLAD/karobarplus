@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+{% load indian_formatting %}
+
+{% block title %}Supplier Udhaar (Payable) | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="udhaar">
+<style>
+/* ==========================================================================
+   Udhaar CRM — Design System (page-scoped)
+   Same token set as the Suppliers Directory page. Once promoted to a shared
+   stylesheet in base.html, remove this duplicate block and the `.udhaar`
+   prefix requirement.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.udhaar {
+    --u-ink: #12172B;
+    --u-ink-soft: #4B5268;
+    --u-muted: #8A90A3;
+    --u-line: #E7E9F2;
+    --u-line-soft: #F0F1F7;
+    --u-surface: #FFFFFF;
+    --u-bg: #F6F7FB;
+
+    --u-primary: #1E2A4A;
+    --u-primary-hover: #16213D;
+    --u-primary-tint: #EDF0F7;
+
+    --u-gold: #B8863B;
+    --u-gold-tint: #FBF3E4;
+
+    --u-success: #158A4D;
+    --u-success-tint: #E9F7EF;
+    --u-warning: #B7690A;
+    --u-warning-tint: #FDF1E1;
+    --u-danger: #C0362C;
+    --u-danger-tint: #FBEBEA;
+    --u-info: #2E5AAC;
+    --u-info-tint: #EAF0FB;
+
+    --u-radius-sm: 8px;
+    --u-radius: 12px;
+    --u-radius-lg: 16px;
+    --u-shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.05);
+    --u-shadow: 0 4px 16px rgba(18, 23, 43, 0.06);
+    --u-shadow-lg: 0 12px 32px rgba(18, 23, 43, 0.10);
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--u-ink);
+    background: var(--u-bg);
+    padding: 4px 4px 32px;
+}
+
+.udhaar * { box-sizing: border-box; }
+
+.udhaar .u-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--u-gold);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.udhaar h3.u-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--u-ink);
+    margin: 0 0 4px;
+}
+
+.udhaar .u-subtitle {
+    color: var(--u-ink-soft);
+    font-size: 14px;
+    margin: 0;
+    max-width: 56ch;
+}
+
+/* ---- Buttons ---- */
+.udhaar .u-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.udhaar .u-btn:active { transform: translateY(1px); }
+
+.udhaar .u-btn-primary {
+    background: var(--u-primary);
+    color: #fff;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-btn-primary:hover { background: var(--u-primary-hover); color: #fff; }
+
+.udhaar .u-btn-secondary {
+    background: var(--u-surface);
+    color: var(--u-ink);
+    border-color: var(--u-line);
+}
+.udhaar .u-btn-secondary:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+
+.udhaar .u-btn-ghost {
+    background: transparent;
+    color: var(--u-ink-soft);
+    border-color: transparent;
+    padding: 7px 10px;
+}
+.udhaar .u-btn-ghost:hover { background: var(--u-line-soft); color: var(--u-ink); }
+
+.udhaar .u-btn-sm { padding: 6px 11px; font-size: 12.5px; }
+
+.udhaar .u-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid var(--u-line);
+    background: var(--u-surface);
+    color: var(--u-ink-soft);
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.udhaar .u-icon-btn:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+.udhaar .u-icon-btn.danger:hover { border-color: var(--u-danger); color: var(--u-danger); background: var(--u-danger-tint); }
+
+/* ---- Stat cards ---- */
+.udhaar .u-stat-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+@media (max-width: 991px) {
+    .udhaar .u-stat-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 575px) {
+    .udhaar .u-stat-row { grid-template-columns: repeat(2, 1fr); }
+}
+.udhaar .u-stat {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 16px 18px;
+    box-shadow: var(--u-shadow-sm);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+.udhaar .u-stat::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--u-stat-accent, var(--u-line));
+}
+.udhaar .u-stat--payable { --u-stat-accent: var(--u-gold); }
+.udhaar .u-stat--overdue { --u-stat-accent: var(--u-danger); }
+.udhaar .u-stat--neutral { --u-stat-accent: var(--u-primary); }
+.udhaar .u-stat--paid { --u-stat-accent: var(--u-success); }
+
+.udhaar .u-stat-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--u-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+.udhaar .u-stat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+}
+.udhaar .u-stat--neutral .u-stat-value { color: var(--u-ink); }
+.udhaar .u-stat--paid .u-stat-value { color: var(--u-success); }
+.udhaar .u-stat--payable .u-stat-value { color: var(--u-gold); }
+.udhaar .u-stat--overdue .u-stat-value { color: var(--u-danger); }
+
+/* ---- Filter / search card ---- */
+.udhaar .u-search-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 14px 16px;
+    box-shadow: var(--u-shadow-sm);
+    margin-bottom: 24px;
+}
+.udhaar .u-select {
+    width: 100%;
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238A90A3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 34px;
+}
+.udhaar .u-select:focus {
+    outline: none;
+    border-color: var(--u-primary);
+    background-color: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+
+/* ---- Table card ---- */
+.udhaar .u-table-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    box-shadow: var(--u-shadow-sm);
+    overflow: hidden;
+}
+.udhaar .u-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+.udhaar .u-table thead th {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--u-muted);
+    background: var(--u-line-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--u-line);
+    white-space: nowrap;
+}
+.udhaar .u-table tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--u-line-soft);
+    vertical-align: middle;
+    color: var(--u-ink-soft);
+}
+.udhaar .u-table tbody tr:last-child td { border-bottom: none; }
+.udhaar .u-table tbody tr { transition: background 0.12s ease; }
+.udhaar .u-table tbody tr:hover { background: var(--u-line-soft); }
+
+.udhaar .u-supplier-name {
+    font-weight: 700;
+    color: var(--u-ink);
+    text-decoration: none;
+}
+.udhaar .u-supplier-name:hover { color: var(--u-primary); }
+
+.udhaar .u-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--u-ink);
+}
+
+.udhaar .u-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+.udhaar .u-badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+.udhaar .u-badge--due { background: var(--u-warning-tint); color: var(--u-warning); }
+.udhaar .u-badge--overdue { background: var(--u-danger-tint); color: var(--u-danger); }
+.udhaar .u-badge--paid { background: var(--u-success-tint); color: var(--u-success); }
+.udhaar .u-badge--partial { background: var(--u-info-tint); color: var(--u-info); }
+
+.udhaar .u-overdue-days { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ---- Empty state ---- */
+.udhaar .u-empty {
+    text-align: center;
+    padding: 72px 24px;
+}
+.udhaar .u-empty-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--u-primary-tint);
+    color: var(--u-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 18px;
+}
+.udhaar .u-empty h5 { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--u-ink); margin-bottom: 6px; }
+.udhaar .u-empty p { color: var(--u-muted); font-size: 13.5px; max-width: 38ch; margin: 0 auto 20px; }
+
+/* ---- Responsive table ---- */
+@media (max-width: 767px) {
+    .udhaar .u-table thead { display: none; }
+    .udhaar .u-table, .udhaar .u-table tbody, .udhaar .u-table tr, .udhaar .u-table td { display: block; width: 100%; }
+    .udhaar .u-table tr {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--u-line);
+    }
+    .udhaar .u-table td {
+        border: none;
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        text-align: right;
+    }
+    .udhaar .u-table td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--u-muted);
+        flex-shrink: 0;
+        text-align: left;
+    }
+    .udhaar .u-table td.u-row-actions { justify-content: flex-end; padding-top: 10px; flex-wrap: wrap; }
+    .udhaar .u-row-actions::before { content: none; }
+}
+</style>
+
+<!-- Page header -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+    <div>
+        <span class="u-eyebrow">Payables</span>
+        <h3 class="u-title"><i class="bi bi-wallet2 me-2"></i>Supplier Udhaar (Payable)</h3>
+        <p class="u-subtitle">Track money owed to wholesale suppliers — payable is money going out of the business.</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <a href="{% url 'suppliers:export_purchases' %}" class="u-btn u-btn-secondary">
+            <i class="bi bi-download"></i> Export Purchases
+        </a>
+        <a href="{% url 'suppliers:export_payments' %}" class="u-btn u-btn-secondary">
+            <i class="bi bi-download"></i> Export Payments
+        </a>
+        <a href="{% url 'suppliers:purchase_create' %}" class="u-btn u-btn-primary">
+            <i class="bi bi-cart-plus"></i> Record Supplier Purchase
+        </a>
+    </div>
+</div>
+
+<!-- Summary cards -->
+<div class="u-stat-row">
+    <div class="u-stat u-stat--payable">
+        <span class="u-stat-label">Total Payable</span>
+        <strong class="u-stat-value">₹{{ total_payable|floatformat:2 }}</strong>
+    </div>
+    <div class="u-stat u-stat--overdue">
+        <span class="u-stat-label">Overdue Payable</span>
+        <strong class="u-stat-value">₹{{ overdue_payable|floatformat:2 }}</strong>
+    </div>
+    <div class="u-stat u-stat--neutral">
+        <span class="u-stat-label">Due Today</span>
+        <strong class="u-stat-value">₹{{ due_today|floatformat:2 }}</strong>
+    </div>
+    <div class="u-stat u-stat--neutral">
+        <span class="u-stat-label">Due Soon (7 Days)</span>
+        <strong class="u-stat-value">₹{{ due_soon|floatformat:2 }}</strong>
+    </div>
+    <div class="u-stat u-stat--paid">
+        <span class="u-stat-label">Paid This Month</span>
+        <strong class="u-stat-value">₹{{ paid_this_month|floatformat:2 }}</strong>
+    </div>
+</div>
+
+<!-- Filter bar -->
+<div class="u-search-card">
+    <form method="get" class="row g-2">
+        <div class="col-12 col-md-5">
+            <select name="supplier_id" class="u-select" onchange="this.form.submit()">
+                <option value="">-- All Suppliers --</option>
+                {% for s in suppliers %}
+                <option value="{{ s.pk }}" {% if supplier_filter == s.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ s.supplier_name }} (Payable: ₹{{ s.outstanding_payable|floatformat:2 }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 col-md-4">
+            <select name="status" class="u-select" onchange="this.form.submit()">
+                <option value="">-- All Statuses --</option>
+                <option value="Due" {% if status_filter == 'Due' %}selected{% endif %}>Due Only</option>
+                <option value="Overdue" {% if status_filter == 'Overdue' %}selected{% endif %}>Overdue Only</option>
+                <option value="Partially Paid" {% if status_filter == 'Partially Paid' %}selected{% endif %}>Partially Paid Only</option>
+                <option value="Paid" {% if status_filter == 'Paid' %}selected{% endif %}>Paid Only</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-3">
+            <a href="{% url 'suppliers:payable_list' %}" class="u-btn u-btn-secondary w-100 justify-content-center">Clear Filters</a>
+        </div>
+    </form>
+</div>
+
+<!-- Payable records table -->
+<div class="u-table-card">
+    <div class="table-responsive">
+        <table class="u-table">
+            <thead>
+                <tr>
+                    <th>Supplier</th>
+                    <th>Purchase Date</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">Paid</th>
+                    <th class="text-end">Remaining Payable</th>
+                    <th>Due Date</th>
+                    <th class="text-center">Days Overdue</th>
+                    <th>Status</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in purchases %}
+                <tr>
+                    <td data-label="Supplier">
+                        <a href="{% url 'suppliers:detail' p.supplier.pk %}" class="u-supplier-name">
+                            {{ p.supplier.supplier_name }}
+                        </a>
+                    </td>
+                    <td data-label="Purchase Date">{{ p.purchase_date|date:"d M Y" }}</td>
+                    <td data-label="Total" class="text-end"><span class="u-num">₹{{ p.total_purchase|floatformat:2 }}</span></td>
+                    <td data-label="Paid" class="text-end"><span class="u-num" style="color: var(--u-success);">₹{{ p.paid_amount|floatformat:2 }}</span></td>
+                    <td data-label="Remaining Payable" class="text-end">
+                        <span class="u-num" style="{% if p.remaining_payable > 0 %}color: var(--u-danger);{% else %}color: var(--u-muted);{% endif %}">
+                            ₹{{ p.remaining_payable|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td data-label="Due Date">{{ p.due_date|date:"d M Y"|default:"—" }}</td>
+                    <td data-label="Days Overdue" class="text-center">
+                        <span class="u-overdue-days" style="{% if p.days_overdue > 0 %}color: var(--u-danger);{% else %}color: var(--u-muted);{% endif %}">
+                            {{ p.days_overdue }} days
+                        </span>
+                    </td>
+                    <td data-label="Status">
+                        <span class="u-badge {% if p.status == 'Paid' %}u-badge--paid{% elif p.status == 'Overdue' %}u-badge--overdue{% elif p.status == 'Partially Paid' %}u-badge--partial{% else %}u-badge--due{% endif %}">
+                            {{ p.status }}
+                        </span>
+                    </td>
+                    <td class="text-end u-row-actions">
+                        <div class="d-flex align-items-center justify-content-end gap-1">
+                            <a href="{% url 'suppliers:purchase_edit' p.pk %}" class="u-btn u-btn-secondary u-btn-sm" title="Edit Purchase">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a href="{% url 'suppliers:detail' p.supplier.pk %}" class="u-btn u-btn-primary u-btn-sm" title="Record Payment">
+                                Record Payment
+                            </a>
+                            <a href="{% url 'suppliers:purchase_delete' p.pk %}" class="u-icon-btn danger" title="Delete Purchase">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9">
+                        <div class="u-empty">
+                            <div class="u-empty-icon"><i class="bi bi-wallet2"></i></div>
+                            <h5>No payable records found</h5>
+                            <p>Purchases you record from suppliers will show up here with their due dates and payment status.</p>
+                            <a href="{% url 'suppliers:purchase_create' %}" class="u-btn u-btn-primary">
+                                <i class="bi bi-cart-plus"></i> Record Supplier Purchase
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+{% endblock %}

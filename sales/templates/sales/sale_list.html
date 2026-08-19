@@ -1,0 +1,428 @@
+{% extends "base.html" %}
+{% load indian_formatting %}
+
+{% block title %}Sales History | KarobarPlus{% endblock %}
+
+{% block content %}
+<div class="udhaar">
+<style>
+/* ==========================================================================
+   Udhaar CRM — Design System (page-scoped)
+   Same token set as the Suppliers Directory / Supplier Payable pages. Once
+   promoted to a shared stylesheet in base.html, remove this duplicate block
+   and the `.udhaar` prefix requirement.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.udhaar {
+    --u-ink: #12172B;
+    --u-ink-soft: #4B5268;
+    --u-muted: #8A90A3;
+    --u-line: #E7E9F2;
+    --u-line-soft: #F0F1F7;
+    --u-surface: #FFFFFF;
+    --u-bg: #F6F7FB;
+
+    --u-primary: #1E2A4A;
+    --u-primary-hover: #16213D;
+    --u-primary-tint: #EDF0F7;
+
+    --u-gold: #B8863B;
+    --u-gold-tint: #FBF3E4;
+
+    --u-success: #158A4D;
+    --u-success-tint: #E9F7EF;
+    --u-warning: #B7690A;
+    --u-warning-tint: #FDF1E1;
+    --u-danger: #C0362C;
+    --u-danger-tint: #FBEBEA;
+    --u-info: #2E5AAC;
+    --u-info-tint: #EAF0FB;
+
+    --u-radius-sm: 8px;
+    --u-radius: 12px;
+    --u-radius-lg: 16px;
+    --u-shadow-sm: 0 1px 2px rgba(18, 23, 43, 0.05);
+    --u-shadow: 0 4px 16px rgba(18, 23, 43, 0.06);
+    --u-shadow-lg: 0 12px 32px rgba(18, 23, 43, 0.10);
+
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--u-ink);
+    background: var(--u-bg);
+    padding: 4px 4px 32px;
+}
+
+.udhaar * { box-sizing: border-box; }
+
+.udhaar .u-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--u-gold);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.udhaar h3.u-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--u-ink);
+    margin: 0 0 4px;
+}
+
+.udhaar .u-subtitle {
+    color: var(--u-ink-soft);
+    font-size: 14px;
+    margin: 0;
+    max-width: 56ch;
+}
+
+/* ---- Buttons ---- */
+.udhaar .u-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 9px 16px;
+    border-radius: var(--u-radius-sm);
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.udhaar .u-btn:active { transform: translateY(1px); }
+
+.udhaar .u-btn-primary {
+    background: var(--u-primary);
+    color: #fff;
+    box-shadow: var(--u-shadow-sm);
+}
+.udhaar .u-btn-primary:hover { background: var(--u-primary-hover); color: #fff; }
+
+.udhaar .u-btn-secondary {
+    background: var(--u-surface);
+    color: var(--u-ink);
+    border-color: var(--u-line);
+}
+.udhaar .u-btn-secondary:hover { border-color: var(--u-primary); color: var(--u-primary); background: var(--u-primary-tint); }
+
+.udhaar .u-btn-ghost {
+    background: transparent;
+    color: var(--u-ink-soft);
+    border-color: transparent;
+    padding: 7px 10px;
+}
+.udhaar .u-btn-ghost:hover { background: var(--u-line-soft); color: var(--u-ink); }
+
+.udhaar .u-btn-sm { padding: 6px 11px; font-size: 12.5px; }
+
+/* ---- Search / filter card ---- */
+.udhaar .u-search-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    padding: 14px 16px;
+    box-shadow: var(--u-shadow-sm);
+    margin-bottom: 24px;
+}
+.udhaar .u-search-input-wrap { position: relative; }
+.udhaar .u-search-input-wrap i {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--u-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+.udhaar .u-search-input {
+    width: 100%;
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 10px 14px 10px 36px;
+    font-size: 14px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.udhaar .u-search-input:focus {
+    outline: none;
+    border-color: var(--u-primary);
+    background: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+.udhaar .u-select {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--u-line);
+    background: var(--u-bg);
+    border-radius: var(--u-radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--u-ink);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%238A90A3' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 34px;
+}
+.udhaar .u-select:focus {
+    outline: none;
+    border-color: var(--u-primary);
+    background-color: var(--u-surface);
+    box-shadow: 0 0 0 3px var(--u-primary-tint);
+}
+
+/* ---- Table card ---- */
+.udhaar .u-table-card {
+    background: var(--u-surface);
+    border: 1px solid var(--u-line);
+    border-radius: var(--u-radius-lg);
+    box-shadow: var(--u-shadow-sm);
+    overflow: hidden;
+}
+.udhaar .u-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+.udhaar .u-table thead th {
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--u-muted);
+    background: var(--u-line-soft);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--u-line);
+    white-space: nowrap;
+}
+.udhaar .u-table tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--u-line-soft);
+    vertical-align: middle;
+    color: var(--u-ink-soft);
+}
+.udhaar .u-table tbody tr:last-child td { border-bottom: none; }
+.udhaar .u-table tbody tr { transition: background 0.12s ease; }
+.udhaar .u-table tbody tr:hover { background: var(--u-line-soft); }
+
+.udhaar .u-invoice-no {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: var(--u-ink);
+}
+.udhaar .u-customer-name {
+    font-weight: 700;
+    color: var(--u-ink);
+    text-decoration: none;
+}
+.udhaar .u-customer-name:hover { color: var(--u-primary); }
+
+.udhaar .u-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--u-ink);
+}
+
+.udhaar .u-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+.udhaar .u-badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+.udhaar .u-badge--credit { background: var(--u-danger-tint); color: var(--u-danger); }
+.udhaar .u-badge--clear { background: var(--u-success-tint); color: var(--u-success); font-family: 'Inter', sans-serif; }
+
+.udhaar .u-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--u-line-soft);
+    color: var(--u-ink-soft);
+    border: 1px solid var(--u-line);
+    white-space: nowrap;
+}
+.udhaar .u-tag--credit { background: var(--u-gold-tint); color: var(--u-gold); border-color: transparent; }
+
+/* ---- Empty state ---- */
+.udhaar .u-empty {
+    text-align: center;
+    padding: 72px 24px;
+}
+.udhaar .u-empty-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: var(--u-primary-tint);
+    color: var(--u-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 18px;
+}
+.udhaar .u-empty h5 { font-family: 'Manrope', sans-serif; font-weight: 700; color: var(--u-ink); margin-bottom: 6px; }
+.udhaar .u-empty p { color: var(--u-muted); font-size: 13.5px; max-width: 36ch; margin: 0 auto 20px; }
+
+/* ---- Responsive table ---- */
+@media (max-width: 767px) {
+    .udhaar .u-table thead { display: none; }
+    .udhaar .u-table, .udhaar .u-table tbody, .udhaar .u-table tr, .udhaar .u-table td { display: block; width: 100%; }
+    .udhaar .u-table tr {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--u-line);
+    }
+    .udhaar .u-table td {
+        border: none;
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        text-align: right;
+    }
+    .udhaar .u-table td::before {
+        content: attr(data-label);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--u-muted);
+        flex-shrink: 0;
+        text-align: left;
+    }
+    .udhaar .u-table td.u-row-actions { justify-content: flex-end; padding-top: 10px; }
+    .udhaar .u-row-actions::before { content: none; }
+}
+</style>
+
+<!-- Page header -->
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+    <div>
+        <span class="u-eyebrow">Sales</span>
+        <h3 class="u-title"><i class="bi bi-receipt me-2"></i>Sales Register</h3>
+        <p class="u-subtitle">Track every sale invoice, payments received, and credit extended.</p>
+    </div>
+    <a href="{% url 'sales:create' %}" class="u-btn u-btn-primary">
+        <i class="bi bi-cart-plus-fill"></i> Record New Sale
+    </a>
+</div>
+
+<!-- Search & filters -->
+<div class="u-search-card">
+    <form method="get" action="{% url 'sales:list' %}" class="row g-2 align-items-stretch">
+        <div class="col-12 col-md-6">
+            <div class="u-search-input-wrap">
+                <i class="bi bi-search"></i>
+                <input type="text" name="q" value="{{ search_query }}" class="u-search-input" placeholder="Search by invoice number, customer name, phone...">
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <select name="method" class="u-select">
+                <option value="">All Payment Methods</option>
+                <option value="Cash" {% if method_filter == 'Cash' %}selected{% endif %}>Cash</option>
+                <option value="UPI" {% if method_filter == 'UPI' %}selected{% endif %}>UPI Payment</option>
+                <option value="Bank Transfer" {% if method_filter == 'Bank Transfer' %}selected{% endif %}>Bank Transfer</option>
+                <option value="Udhaar / Credit" {% if method_filter == 'Udhaar / Credit' %}selected{% endif %}>Udhaar / Credit</option>
+            </select>
+        </div>
+        <div class="col-6 col-md-2 d-flex gap-2">
+            <button type="submit" class="u-btn u-btn-primary w-100 justify-content-center">Filter</button>
+            {% if search_query or method_filter %}
+            <a href="{% url 'sales:list' %}" class="u-icon-btn" title="Clear Filters" style="width: auto; padding: 0 12px;"><i class="bi bi-x-circle"></i></a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Sales table -->
+<div class="u-table-card">
+    <div class="table-responsive">
+        <table class="u-table">
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Customer Name</th>
+                    <th>Date</th>
+                    <th class="text-end">Total Amount</th>
+                    <th class="text-end">Paid Amount</th>
+                    <th class="text-end">Udhaar Balance</th>
+                    <th>Method</th>
+                    <th class="text-end">Invoice</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in sales %}
+                <tr>
+                    <td data-label="Invoice #"><span class="u-invoice-no">#{{ s.invoice_number }}</span></td>
+                    <td data-label="Customer">
+                        <a href="{% url 'customers:detail' s.customer.pk %}" class="u-customer-name">
+                            {{ s.customer.name }}
+                        </a>
+                    </td>
+                    <td data-label="Date" style="color: var(--u-muted); font-size: 12.5px;">{{ s.sale_date|date:"d M Y, h:i A" }}</td>
+                    <td data-label="Total Amount" class="text-end"><span class="u-num">{{ s.total_amount|inr }}</span></td>
+                    <td data-label="Paid Amount" class="text-end"><span class="u-num" style="color: var(--u-success);">{{ s.paid_amount|inr }}</span></td>
+                    <td data-label="Udhaar Balance" class="text-end">
+                        {% if s.udhaar_amount > 0 %}
+                        <span class="u-badge u-badge--credit">{{ s.udhaar_amount|inr }}</span>
+                        {% else %}
+                        <span class="u-badge u-badge--clear">Clear</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Method">
+                        <span class="u-tag {% if s.payment_method == 'Udhaar / Credit' %}u-tag--credit{% endif %}">{{ s.payment_method }}</span>
+                    </td>
+                    <td class="text-end u-row-actions">
+                        <a href="{% url 'sales:detail' s.pk %}" class="u-btn u-btn-secondary u-btn-sm">
+                            <i class="bi bi-file-earmark-text"></i> Invoice
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">
+                        <div class="u-empty">
+                            <div class="u-empty-icon"><i class="bi bi-cart-check"></i></div>
+                            <h5>No sales records found</h5>
+                            <p>Every invoice you create will show up here with what's paid and what's still on udhaar.</p>
+                            <a href="{% url 'sales:create' %}" class="u-btn u-btn-primary">
+                                <i class="bi bi-cart-plus-fill"></i> Create First Sale
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+{% endblock %}
