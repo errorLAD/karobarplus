@@ -12,7 +12,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "*",
-    "https://nextslot.in",
     "nextslot.in",
 ]
 
