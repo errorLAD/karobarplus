@@ -12,6 +12,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "*",
+    "https://karobarplus-production.up.railway.app",
     "nextslot.in",
 ]
 
