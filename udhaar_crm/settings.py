@@ -10,9 +10,16 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-udhaar-crm-super-secret-ke
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://nextslot.in','nextslot.in']
+ALLOWED_HOSTS = [
+    "*",
+    "https://nextslot.in",
+    "nextslot.in",
+]
+
 CSRF_TRUSTED_ORIGINS = [
-    "https://karobarplus-production.up.railway.app","https://nextslot.in","nextslot.in",
+    "https://karobarplus-production.up.railway.app",
+    "https://nextslot.in",
+    "nextslot.in",
 ]
 INSTALLED_APPS = [
     'django.contrib.admin',
